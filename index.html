@@ -13,31 +13,21 @@
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    min-height: 100vh;
-    background: #f5f6f8;
-    color: #1f2937;
+    min-height: 100vh; background: #f5f6f8; color: #1f2937;
     font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
     padding: 20px 16px 60px;
     padding-top: calc(20px + env(safe-area-inset-top));
     padding-bottom: calc(60px + env(safe-area-inset-bottom));
-    -webkit-tap-highlight-color: transparent;
-    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
   }
   input, select, textarea {
-    background: #ffffff;
-    border: 1px solid #d1d5db;
-    color: #111827;
-    border-radius: 4px;
-    padding: 9px 11px;
-    font-family: inherit;
-    font-size: 14px;
-    width: 100%;
-    outline: none;
+    background: #fff; border: 1px solid #d1d5db; color: #111827;
+    border-radius: 4px; padding: 9px 11px; font-family: inherit;
+    font-size: 14px; width: 100%; outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
   input:focus, select:focus, textarea:focus {
-    border-color: #2d5a87;
-    box-shadow: 0 0 0 3px rgba(45, 90, 135, 0.12);
+    border-color: #2d5a87; box-shadow: 0 0 0 3px rgba(45,90,135,0.12);
   }
   textarea { resize: vertical; min-height: 70px; font-family: inherit; }
   textarea:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
@@ -46,15 +36,13 @@
     letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px;
   }
   .card {
-    background: #ffffff; border: 1px solid #e5e7eb;
-    border-radius: 6px; padding: 16px; margin-bottom: 12px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 6px;
+    padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
   }
   .btn {
-    border: none; border-radius: 4px;
-    padding: 10px 18px; font-family: inherit;
-    font-size: 14px; font-weight: 500; cursor: pointer;
-    transition: all 0.15s; letter-spacing: 0.01em;
+    border: none; border-radius: 4px; padding: 10px 18px;
+    font-family: inherit; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
   }
   .btn-primary { background: #2d5a87; color: #fff; border: 1px solid #244a72; }
   .btn-primary:active { background: #1d3b5c; }
@@ -75,37 +63,27 @@
     font-size: 10.5px; font-weight: 600; color: #6b7280;
     letter-spacing: 0.08em; text-transform: uppercase; padding-bottom: 4px;
   }
-  .output-box {
-    background: #0f172a; border: 1px solid #1e293b;
-    border-radius: 4px; padding: 14px;
-    font-family: 'IBM Plex Mono', 'Menlo', monospace;
-    font-size: 11.5px; line-height: 1.65; color: #cbd5e1;
-    white-space: pre; word-break: normal;
-    max-height: 340px; overflow: auto;
-  }
   .section-title {
     font-size: 11px; font-weight: 700; color: #374151;
     letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 14px; padding-bottom: 10px;
-    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;
     display: flex; justify-content: space-between; align-items: center;
   }
   .chk-wrap {
     display: flex; align-items: center; gap: 7px;
-    cursor: pointer; user-select: none;
-    font-size: 11px; font-weight: 600;
-    color: #4b5563; letter-spacing: 0.04em;
+    cursor: pointer; user-select: none; font-size: 11px;
+    font-weight: 600; color: #4b5563; letter-spacing: 0.04em;
   }
   .chk {
     width: 18px; height: 18px; border: 1.5px solid #9ca3af;
     border-radius: 3px; display: flex; align-items: center; justify-content: center;
-    background: #fff; transition: all 0.15s; color: #fff; font-size: 13px; font-weight: 700;
+    background: #fff; transition: all 0.15s; color: #fff;
+    font-size: 13px; font-weight: 700;
   }
   .chk.on { background: #2d5a87; border-color: #2d5a87; }
   .brand {
     display: flex; align-items: center; gap: 12px;
-    padding: 4px 0 20px; border-bottom: 2px solid #1f2937;
-    margin-bottom: 22px;
+    padding: 4px 0 20px; border-bottom: 2px solid #1f2937; margin-bottom: 22px;
   }
   .brand-mark {
     width: 38px; height: 38px; background: #1f2937; color: #fff;
@@ -124,13 +102,31 @@
     text-transform: uppercase; margin-left: 6px;
     background: #dcfce7; color: #166534; border: 1px solid #86efac;
   }
-  .help {
-    margin-top: 10px; font-size: 11px; color: #6b7280;
-    font-family: 'IBM Plex Mono', monospace;
+  /* Teams Preview */
+  .preview {
+    background: #fafbfc; border: 1px solid #e1e4e8;
+    border-radius: 4px; padding: 16px;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.5; color: #24292e;
   }
-  .hint-row {
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 10px; align-items: center;
+  .preview-heading { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #111; }
+  .preview-meta { color: #444; margin-bottom: 14px; }
+  .preview-table {
+    width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px;
+  }
+  .preview-table th {
+    background: #f1f3f5; text-align: left;
+    padding: 8px 10px; border: 1px solid #d0d7de;
+    font-weight: 600; color: #24292e;
+  }
+  .preview-table td {
+    padding: 8px 10px; border: 1px solid #d0d7de; background: #fff;
+  }
+  .preview-section { margin-top: 12px; line-height: 1.5; }
+  .preview-section strong { color: #111; }
+  .help {
+    margin-top: 14px; font-size: 11px; color: #6b7280;
+    font-family: 'IBM Plex Mono', monospace;
   }
 </style>
 </head>
@@ -139,7 +135,7 @@
 <div class="brand">
   <div class="brand-mark">H—</div>
   <div>
-    <div class="brand-title">Shift Handover <span class="offline-badge" id="offlineBadge">● Offline Ready</span></div>
+    <div class="brand-title">Shift Handover <span class="offline-badge">● Offline Ready</span></div>
     <div class="brand-sub">Production / Teams Export</div>
   </div>
 </div>
@@ -207,65 +203,47 @@
   Generate Handover
 </button>
 
-<!-- Output (hidden initially) -->
+<!-- Output -->
 <div class="card" id="outputCard" style="display: none;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
-    <div style="font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase;">Teams Output</div>
-    <button class="btn btn-copy" id="copyBtn">Copy to Clipboard</button>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb;">
+    <div style="font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase;">How it looks in Teams</div>
+    <button class="btn btn-copy" id="copyBtn">Copy</button>
   </div>
-  <div class="output-box" id="output"></div>
-  <div class="help">→ Paste directly into Teams chat. Code block preserves monospace alignment.</div>
+  <div class="preview" id="preview"></div>
+  <div class="help">→ Tap Copy, then paste into Teams chat. Teams will render the table properly.</div>
 </div>
 
 <script>
-// ============= STATE =============
 const STATUSES = ["✅ Running", "⚠️ Issue", "🔴 Down", "🔧 Maintenance"];
 let rows = [];
-let noIssues = false;
-let noActions = false;
-
-// ============= PERSISTENCE =============
-const STORAGE_KEY = 'handover-state-v1';
+let noIssues = false, noActions = false;
+const STORAGE_KEY = 'handover-state-v2';
 
 function saveState() {
   try {
-    const state = {
-      date: document.getElementById('date').value,
-      shift: document.getElementById('shift').value,
-      by: document.getElementById('by').value,
-      rows: rows,
-      incidents: document.getElementById('incidents').value,
-      actions: document.getElementById('actions').value,
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      date: getEl('date').value, shift: getEl('shift').value,
+      by: getEl('by').value, rows,
+      incidents: getEl('incidents').value, actions: getEl('actions').value,
       noIssues, noActions
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch(e) {}
+    }));
+  } catch(e){}
 }
-
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch(e) { return null; }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); }
+  catch(e) { return null; }
+}
+function getEl(id) { return document.getElementById(id); }
+function escapeHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escapeAttr(s) {
+  return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 }
 
-// ============= WIDTH CALC =============
-function visualWidth(str) {
-  const emojiRegex = /\p{Extended_Pictographic}/gu;
-  const emojiCount = (str.match(emojiRegex) || []).length;
-  const vs16Count = (str.match(/\uFE0F/g) || []).length;
-  const codePoints = [...str].length;
-  return codePoints + emojiCount - vs16Count;
-}
-function padVisual(str, targetWidth) {
-  const diff = targetWidth - visualWidth(str);
-  return str + " ".repeat(Math.max(0, diff));
-}
-
-// ============= ROW RENDERING =============
+// ===== Row rendering =====
 function renderRows() {
-  const container = document.getElementById('rows');
+  const container = getEl('rows');
   container.innerHTML = '';
   rows.forEach((row, i) => {
     const div = document.createElement('div');
@@ -281,113 +259,121 @@ function renderRows() {
     container.appendChild(div);
   });
 
-  // Wire up inputs
   container.querySelectorAll('input, select').forEach(el => {
-    el.addEventListener('input', e => {
+    const handler = e => {
       const i = +e.target.dataset.i;
       const f = e.target.dataset.f;
       let val = e.target.value;
-      if (f === 'machine') val = val.toUpperCase();
+      if (f === 'machine') {
+        const upper = val.toUpperCase();
+        if (upper !== val) e.target.value = upper;
+        val = upper;
+      }
       rows[i][f] = val;
-      if (f === 'machine' && e.target.value !== val) e.target.value = val;
       saveState();
-    });
-    el.addEventListener('change', e => {
-      const i = +e.target.dataset.i;
-      const f = e.target.dataset.f;
-      rows[i][f] = e.target.value;
-      saveState();
-    });
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
   });
   container.querySelectorAll('button[data-act="remove"]').forEach(btn => {
     btn.addEventListener('click', e => {
-      const i = +e.target.dataset.i;
-      rows.splice(i, 1);
-      renderRows();
-      saveState();
+      const i = +e.currentTarget.dataset.i;
+      rows.splice(i, 1); renderRows(); saveState();
     });
   });
 }
 
-function escapeAttr(s) {
-  return String(s || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}
-
-// ============= CHECKBOXES =============
+// ===== Checkboxes =====
 function updateChk() {
-  document.getElementById('noIssuesChk').className = 'chk' + (noIssues ? ' on' : '');
-  document.getElementById('noIssuesChk').textContent = noIssues ? '✓' : '';
-  document.getElementById('noActionsChk').className = 'chk' + (noActions ? ' on' : '');
-  document.getElementById('noActionsChk').textContent = noActions ? '✓' : '';
+  const ni = getEl('noIssuesChk');
+  const na = getEl('noActionsChk');
+  ni.className = 'chk' + (noIssues ? ' on' : '');
+  ni.textContent = noIssues ? '✓' : '';
+  na.className = 'chk' + (noActions ? ' on' : '');
+  na.textContent = noActions ? '✓' : '';
 
-  const inc = document.getElementById('incidents');
-  const act = document.getElementById('actions');
+  const inc = getEl('incidents'), act = getEl('actions');
   if (noIssues) { inc.value = 'None — no issues reported.'; inc.disabled = true; }
   else { if (inc.value === 'None — no issues reported.') inc.value = ''; inc.disabled = false; }
   if (noActions) { act.value = 'None — no action required.'; act.disabled = true; }
   else { if (act.value === 'None — no action required.') act.value = ''; act.disabled = false; }
 }
-
-document.getElementById('noIssuesLabel').addEventListener('click', e => {
+getEl('noIssuesLabel').addEventListener('click', e => {
   e.preventDefault();
   noIssues = !noIssues; updateChk(); saveState();
 });
-document.getElementById('noActionsLabel').addEventListener('click', e => {
+getEl('noActionsLabel').addEventListener('click', e => {
   e.preventDefault();
   noActions = !noActions; updateChk(); saveState();
 });
 
-// ============= GENERATE =============
-document.getElementById('generate').addEventListener('click', () => {
-  const date = document.getElementById('date').value;
-  const shift = document.getElementById('shift').value;
-  const by = document.getElementById('by').value;
-  const incidents = document.getElementById('incidents').value;
-  const actions = document.getElementById('actions').value;
+// ===== Build Markdown (for Teams) =====
+function buildMarkdown() {
+  const date = getEl('date').value;
+  const shift = getEl('shift').value;
+  const by = getEl('by').value;
+  const filtered = rows.filter(r => (r.machine||'').trim());
+  const incText = noIssues ? 'None — no issues reported.' : getEl('incidents').value.trim();
+  const actText = noActions ? 'None — no action required.' : getEl('actions').value.trim();
 
-  const header = `📋 **SHIFT HANDOVER** | ${date} | ${shift} Shift`;
-  const meta = `**Handover By:** ${by || '—'}`;
-  const divider = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+  const parts = [];
+  parts.push(`📋 **SHIFT HANDOVER** — ${date} — ${shift} Shift`);
+  parts.push(`**Handover By:** ${by || '—'}`);
+  parts.push('');
 
-  const filtered = rows.filter(r => (r.machine || '').trim());
+  if (filtered.length > 0) {
+    parts.push('| Machine | Status | Report |');
+    parts.push('|---|---|---|');
+    filtered.forEach(r => {
+      parts.push(`| ${r.machine} | ${r.status} | ${r.report || '—'} |`);
+    });
+    parts.push('');
+  }
+  if (incText) { parts.push(`⚠️ **Incidents / Issues:** ${incText}`); parts.push(''); }
+  if (actText) { parts.push(`📌 **Actions Required:** ${actText}`); }
+  return parts.join('\n');
+}
 
-  const col1 = Math.max(visualWidth('Machine'), ...filtered.map(r => visualWidth(r.machine)));
-  const col2 = Math.max(visualWidth('Status'), ...filtered.map(r => visualWidth(r.status)));
-  const col3 = Math.max(visualWidth('Report'), ...filtered.map(r => visualWidth(r.report || '—')));
+// ===== Build Preview HTML =====
+function renderPreview() {
+  const date = getEl('date').value;
+  const shift = getEl('shift').value;
+  const by = getEl('by').value;
+  const filtered = rows.filter(r => (r.machine||'').trim());
+  const incText = noIssues ? 'None — no issues reported.' : getEl('incidents').value.trim();
+  const actText = noActions ? 'None — no action required.' : getEl('actions').value.trim();
 
-  const top = `┌─${'─'.repeat(col1)}─┬─${'─'.repeat(col2)}─┬─${'─'.repeat(col3)}─┐`;
-  const sep = `├─${'─'.repeat(col1)}─┼─${'─'.repeat(col2)}─┼─${'─'.repeat(col3)}─┤`;
-  const bot = `└─${'─'.repeat(col1)}─┴─${'─'.repeat(col2)}─┴─${'─'.repeat(col3)}─┘`;
-  const hdr = `│ ${padVisual('Machine', col1)} │ ${padVisual('Status', col2)} │ ${padVisual('Report', col3)} │`;
+  let html = '';
+  html += `<div class="preview-heading">📋 SHIFT HANDOVER — ${escapeHtml(date)} — ${escapeHtml(shift)} Shift</div>`;
+  html += `<div class="preview-meta"><strong>Handover By:</strong> ${escapeHtml(by || '—')}</div>`;
 
-  const dataLines = filtered.map(r =>
-    `│ ${padVisual(r.machine, col1)} │ ${padVisual(r.status, col2)} │ ${padVisual(r.report || '—', col3)} │`
-  );
+  if (filtered.length > 0) {
+    html += '<table class="preview-table"><thead><tr><th>Machine</th><th>Status</th><th>Report</th></tr></thead><tbody>';
+    filtered.forEach(r => {
+      html += `<tr><td>${escapeHtml(r.machine)}</td><td>${escapeHtml(r.status)}</td><td>${escapeHtml(r.report || '—')}</td></tr>`;
+    });
+    html += '</tbody></table>';
+  }
+  if (incText) html += `<div class="preview-section"><strong>⚠️ Incidents / Issues:</strong> ${escapeHtml(incText)}</div>`;
+  if (actText) html += `<div class="preview-section"><strong>📌 Actions Required:</strong> ${escapeHtml(actText)}</div>`;
 
-  const tableLines = ['```', top, hdr, sep];
-  dataLines.forEach((line, i) => {
-    tableLines.push(line);
-    if (i < dataLines.length - 1) tableLines.push(sep);
-  });
-  tableLines.push(bot, '```');
-  const tableBlock = tableLines.join('\n');
+  getEl('preview').innerHTML = html;
+}
 
-  const incText = incidents.trim();
-  const actText = actions.trim();
-  const incBlock = incText ? `\n⚠️ **Incidents / Issues:**\n${incText}\n` : '';
-  const actBlock = actText ? `\n📌 **Actions Required:**\n${actText}\n` : '';
-
-  const result = [header, meta, divider, tableBlock, incBlock, actBlock, divider].join('\n');
-
-  document.getElementById('output').textContent = result;
-  document.getElementById('outputCard').style.display = 'block';
-  document.getElementById('copyBtn').textContent = 'Copy to Clipboard';
-  document.getElementById('copyBtn').className = 'btn btn-copy';
+// ===== Generate =====
+getEl('generate').addEventListener('click', () => {
+  renderPreview();
+  getEl('outputCard').style.display = 'block';
+  const btn = getEl('copyBtn');
+  btn.textContent = 'Copy'; btn.classList.remove('copied');
+  setTimeout(() => {
+    getEl('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
 });
 
-// ============= COPY =============
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const text = document.getElementById('output').textContent;
+// ===== Copy =====
+getEl('copyBtn').addEventListener('click', () => {
+  const text = buildMarkdown();
   const fallback = () => {
     const ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
@@ -395,64 +381,55 @@ document.getElementById('copyBtn').addEventListener('click', () => {
     try { document.execCommand('copy'); } catch(e){}
     document.body.removeChild(ta);
   };
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).catch(fallback);
-  } else { fallback(); }
-  const btn = document.getElementById('copyBtn');
-  btn.textContent = '✓ Copied';
-  btn.classList.add('copied');
-  setTimeout(() => {
-    btn.textContent = 'Copy to Clipboard';
-    btn.classList.remove('copied');
-  }, 2500);
+  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(fallback);
+  else fallback();
+  const btn = getEl('copyBtn');
+  btn.textContent = '✓ Copied'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
 });
 
-// ============= ADD ROW =============
-document.getElementById('addRow').addEventListener('click', () => {
+// ===== Add Row =====
+getEl('addRow').addEventListener('click', () => {
   rows.push({ machine: '', status: '✅ Running', report: '' });
   renderRows(); saveState();
 });
 
-// ============= PERSIST INPUTS =============
+// ===== Persist top-level inputs =====
 ['date','shift','by','incidents','actions'].forEach(id => {
-  document.getElementById(id).addEventListener('input', saveState);
-  document.getElementById(id).addEventListener('change', saveState);
+  getEl(id).addEventListener('input', saveState);
+  getEl(id).addEventListener('change', saveState);
 });
 
-// ============= INIT =============
+// ===== Init =====
 (function init() {
   const saved = loadState();
   if (saved) {
-    document.getElementById('date').value = saved.date || new Date().toISOString().slice(0, 10);
-    document.getElementById('shift').value = saved.shift || 'Morning';
-    document.getElementById('by').value = saved.by || '';
-    document.getElementById('incidents').value = saved.incidents || '';
-    document.getElementById('actions').value = saved.actions || '';
-    rows = saved.rows && saved.rows.length ? saved.rows : [
+    getEl('date').value = saved.date || new Date().toISOString().slice(0,10);
+    getEl('shift').value = saved.shift || 'Morning';
+    getEl('by').value = saved.by || '';
+    getEl('incidents').value = saved.incidents || '';
+    getEl('actions').value = saved.actions || '';
+    rows = (saved.rows && saved.rows.length) ? saved.rows : [
       { machine: '', status: '✅ Running', report: '' },
       { machine: '', status: '✅ Running', report: '' },
       { machine: '', status: '✅ Running', report: '' }
     ];
-    noIssues = !!saved.noIssues;
-    noActions = !!saved.noActions;
+    noIssues = !!saved.noIssues; noActions = !!saved.noActions;
   } else {
-    document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+    getEl('date').value = new Date().toISOString().slice(0,10);
     rows = [
       { machine: '', status: '✅ Running', report: '' },
       { machine: '', status: '✅ Running', report: '' },
       { machine: '', status: '✅ Running', report: '' }
     ];
   }
-  renderRows();
-  updateChk();
+  renderRows(); updateChk();
 })();
 
-// ============= OFFLINE / SERVICE WORKER =============
+// ===== Service Worker =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {
-      // SW not available — page still works offline via iOS home screen cache
-    });
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
 </script>
