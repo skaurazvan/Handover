@@ -1,167 +1,539 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Shift Report</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Handover">
+<meta name="theme-color" content="#1f2937">
+<title>Shift Handover</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='32' fill='%231f2937'/%3E%3Ctext x='90' y='118' font-family='monospace' font-size='90' font-weight='700' fill='%23fff' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
 <style>
-body { font-family: Arial; padding: 20px; background: #f5f5f5; }
-h2, h3 { margin-top: 20px; }
-table { border-collapse: collapse; width: 100%; margin-top: 10px; background: white; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-input, select, textarea { width: 100%; padding: 5px; }
-button { margin-top: 15px; padding: 10px 15px; cursor: pointer; }
-.output { margin-top: 20px; white-space: pre-wrap; border: 2px solid #000; padding: 10px; background: white; }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh; background: #f5f6f8; color: #1f2937;
+    font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
+    padding: 20px 16px 60px;
+    padding-top: calc(20px + env(safe-area-inset-top));
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
+  }
+  input, select, textarea {
+    background: #fff; border: 1px solid #d1d5db; color: #111827;
+    border-radius: 4px; padding: 9px 11px; font-family: inherit;
+    font-size: 14px; width: 100%; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #2d5a87; box-shadow: 0 0 0 3px rgba(45,90,135,0.12);
+  }
+  textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+  textarea:disabled { background: #f3f4f6; color: #9ca3af; }
+  .label { font-size: 10.5px; font-weight: 600; color: #4b5563; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+  .btn { border: none; border-radius: 4px; padding: 10px 18px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .btn-primary { background: #2d5a87; color: #fff; border: 1px solid #244a72; }
+  .btn-primary:active { background: #1d3b5c; }
+  .btn-ghost { background: #fff; color: #4b5563; border: 1px solid #d1d5db; }
+  .btn-secondary { background: #fff; color: #2d5a87; border: 1px solid #2d5a87; font-size: 13px; padding: 7px 12px; }
+  .btn-secondary:active { background: #f0f5fa; }
+  .btn-copy { background: #2d5a87; color: #fff; font-size: 13px; padding: 7px 12px; border: 1px solid #244a72; }
+  .btn-copy.copied { background: #0f766e; border-color: #0d5f5a; }
+  .btn-remove { background: transparent; color: #9ca3af; border: 1px solid #e5e7eb; padding: 0; width: 30px; height: 30px; font-size: 13px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .row-grid { display: grid; grid-template-columns: 1.1fr 1fr 1.6fr 30px; gap: 6px; align-items: center; margin-bottom: 7px; }
+  .col-head { font-size: 10.5px; font-weight: 600; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; padding-bottom: 4px; }
+  .section-title { font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+  .chk-wrap { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; font-size: 11px; font-weight: 600; color: #4b5563; letter-spacing: 0.04em; }
+  .chk { width: 18px; height: 18px; border: 1.5px solid #9ca3af; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #fff; color: #fff; font-size: 13px; font-weight: 700; }
+  .chk.on { background: #2d5a87; border-color: #2d5a87; }
+  .brand { display: flex; align-items: center; gap: 12px; padding: 4px 0 20px; border-bottom: 2px solid #1f2937; margin-bottom: 22px; }
+  .brand-mark { width: 38px; height: 38px; background: #1f2937; color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; }
+  .brand-title { font-size: 17px; font-weight: 700; color: #111827; line-height: 1.1; }
+  .brand-sub { font-size: 11px; color: #6b7280; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+  .offline-badge { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; margin-left: 6px; background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+  .report { background: #fff; border: 1px solid #e5e7eb; border-radius: 4px; padding: 22px 20px; font-family: 'Segoe UI', -apple-system, sans-serif; color: #1f2937; line-height: 1.55; }
+  .report-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 14px; }
+  .report-meta { font-size: 13.5px; color: #374151; line-height: 1.7; }
+  .report-meta strong { color: #111; font-weight: 600; }
+  .report hr { border: none; border-top: 1px solid #d1d5db; margin: 16px 0; }
+  .report hr.dashed { border-top: 1px dashed #d1d5db; margin: 12px 0; }
+  .report-section-head { font-size: 11.5px; font-weight: 700; color: #111; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .report-machine-name { font-weight: 700; color: #111; font-size: 14px; }
+  .report-machine-status { color: #374151; font-size: 14px; }
+  .report-machine-notes { color: #4b5563; font-size: 13.5px; margin-top: 3px; }
+  .report-body-text { color: #374151; font-size: 13.5px; }
+  .report-body-text.empty { color: #9ca3af; font-style: italic; }
+  .help { margin-top: 14px; font-size: 11px; color: #6b7280; font-family: 'IBM Plex Mono', monospace; }
+  .btn-row { display: flex; gap: 8px; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; overflow: auto; }
+  .modal-inner { background: #fff; padding: 16px; border-radius: 8px; max-width: 100%; max-height: 90vh; overflow: auto; text-align: center; }
+  .modal-inner img { max-width: 100%; border: 1px solid #e5e7eb; margin-bottom: 10px; }
+  .modal-hint { font-size: 13px; color: #4b5563; margin-bottom: 10px; }
 </style>
-
 </head>
-
 <body>
 
-<h2>Shift Report Generator</h2>
+<div class="brand">
+  <div class="brand-mark">H—</div>
+  <div>
+    <div class="brand-title">Shift Handover <span class="offline-badge">● Offline Ready</span></div>
+    <div class="brand-sub">Production / Teams Export</div>
+  </div>
+</div>
 
-<label>Date:</label>
-<input type="date" id="date"><br><br>
+<div class="card">
+  <div class="section-title"><span>Shift Information</span></div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+    <div><div class="label">Date</div><input type="date" id="date" /></div>
+    <div><div class="label">Shift</div><select id="shift"><option>Morning</option><option>Night</option></select></div>
+  </div>
+  <div><div class="label">Prepared By</div><input id="by" placeholder="Your name" /></div>
+</div>
 
-<label>Shift:</label>
-<select id="shift">
-  <option>Morning</option>
-  <option>Night</option>
-</select><br><br>
+<div class="card">
+  <div class="section-title"><span>Machine Status</span></div>
+  <div class="row-grid" style="margin-bottom: 6px;">
+    <div class="col-head">Machine</div><div class="col-head">Status</div><div class="col-head">Report</div><div></div>
+  </div>
+  <div id="rows"></div>
+  <button class="btn btn-ghost" id="addRow" style="margin-top: 8px; font-size: 13px; padding: 8px 14px;">+ Add Machine</button>
+</div>
 
-<label>Report by:</label>
-<input type="text" id="reportBy"><br><br>
+<div class="card">
+  <div class="section-title">
+    <span>Incidents / Issues</span>
+    <label class="chk-wrap" id="noIssuesLabel"><span class="chk" id="noIssuesChk"></span><span>Nothing to report</span></label>
+  </div>
+  <textarea id="incidents" rows="3" placeholder="Describe any incidents, faults, or quality issues during the shift..."></textarea>
+</div>
 
-<h3>Machine Report</h3>
+<div class="card">
+  <div class="section-title">
+    <span>Actions Required</span>
+    <label class="chk-wrap" id="noActionsLabel"><span class="chk" id="noActionsChk"></span><span>Nothing to report</span></label>
+  </div>
+  <textarea id="actions" rows="3" placeholder="List any tasks or follow-ups for the incoming shift..."></textarea>
+</div>
 
-<table id="machineTable">
-<tr>
-<th>Machine</th>
-<th>Status</th>
-<th>Report</th>
-</tr>
+<button class="btn btn-primary" id="generate" style="width: 100%; padding: 13px; font-size: 14px; margin-bottom: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">Generate Handover</button>
 
-<tr>
-<td><input type="text" value="M1"></td>
-<td>
-<select>
-<option>🟢 Running</option>
-<option>🟡 Issue</option>
-<option>🔴 Down</option>
-<option>🛠 Maintenance</option>
-</select>
-</td>
-<td><input type="text"></td>
-</tr>
+<div class="card" id="outputCard" style="display: none;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; gap: 8px;">
+    <div style="font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase;">Report Preview</div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="imgBtn">📷 Save Image</button>
+      <button class="btn btn-copy" id="copyBtn">Copy</button>
+    </div>
+  </div>
+  <div class="report" id="preview"></div>
+  <div class="help">→ <strong>Save Image</strong> opens your share sheet (send directly to Teams). <strong>Copy</strong> pastes as text.</div>
+</div>
 
-<tr>
-<td><input type="text" value="M2"></td>
-<td>
-<select>
-<option>🟢 Running</option>
-<option>🟡 Issue</option>
-<option>🔴 Down</option>
-<option>🛠 Maintenance</option>
-</select>
-</td>
-<td><input type="text"></td>
-</tr>
-
-</table>
-
-<button onclick="addRow()">➕ Add Machine</button>
-
-<h3>Incidents</h3>
-<input type="checkbox" id="noIssues"> ✔ No issues<br>
-<textarea id="incidents"></textarea>
-
-<h3>Actions Required</h3>
-<input type="checkbox" id="noActions"> ✔ No actions required<br>
-<textarea id="actions"></textarea>
-
-<br>
-<button onclick="generateReport()">📋 Generate Report</button>
-<button onclick="copyReport()">📎 Copy to Clipboard</button>
-
-<h3>Output (copy into Teams)</h3>
-<div class="output" id="output"></div>
+<div class="modal" id="imgModal" style="display:none;">
+  <div class="modal-inner">
+    <div class="modal-hint">Long-press the image to save to Photos, or tap Download.</div>
+    <img id="modalImg" src="" alt="Handover Report" />
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <a id="modalDownload" href="#" download="handover.png" class="btn btn-primary" style="text-decoration: none; display: inline-block;">Download</a>
+      <button class="btn btn-ghost" id="modalClose">Close</button>
+    </div>
+  </div>
+</div>
 
 <script>
-function addRow() {
-  let table = document.getElementById("machineTable");
-  let row = table.insertRow();
+const STATUSES = ["✅ Running", "⚠️ Issue", "🔴 Down", "🔧 Maintenance"];
+let rows = [];
+let noIssues = false, noActions = false;
+const STORAGE_KEY = 'handover-state-v3';
 
-  row.innerHTML = `
-    <td><input type="text"></td>
-    <td>
-      <select>
-        <option>🟢 Running</option>
-        <option>🟡 Issue</option>
-        <option>🔴 Down</option>
-        <option>🛠 Maintenance</option>
-      </select>
-    </td>
-    <td><input type="text"></td>
-  `;
+function getEl(id) { return document.getElementById(id); }
+function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T00:00:00');
+  if (isNaN(d)) return iso;
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-function generateReport() {
-  let date = document.getElementById("date").value;
-  let shift = document.getElementById("shift").value;
-  let reportBy = document.getElementById("reportBy").value;
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      date: getEl('date').value, shift: getEl('shift').value, by: getEl('by').value,
+      rows, incidents: getEl('incidents').value, actions: getEl('actions').value,
+      noIssues, noActions
+    }));
+  } catch(e){}
+}
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){return null;} }
 
-  let output = `📅 Date: ${date}
-`;
-  output += `🕒 Shift: ${shift}
-`;
-  output += `👤 Report by: ${reportBy}
+function renderRows() {
+  const container = getEl('rows');
+  container.innerHTML = '';
+  rows.forEach((row, i) => {
+    const div = document.createElement('div');
+    div.className = 'row-grid';
+    div.innerHTML =
+      '<input placeholder="e.g. IMM-01" value="' + escapeAttr(row.machine) + '" data-i="' + i + '" data-f="machine" />' +
+      '<select data-i="' + i + '" data-f="status">' + STATUSES.map(s => '<option' + (s === row.status ? ' selected' : '') + '>' + s + '</option>').join('') + '</select>' +
+      '<input placeholder="Report notes..." value="' + escapeAttr(row.report) + '" data-i="' + i + '" data-f="report" />' +
+      '<button class="btn btn-remove" data-i="' + i + '" data-act="remove">✕</button>';
+    container.appendChild(div);
+  });
+  container.querySelectorAll('input, select').forEach(el => {
+    const handler = e => {
+      const i = +e.target.dataset.i, f = e.target.dataset.f;
+      let val = e.target.value;
+      if (f === 'machine') {
+        const upper = val.toUpperCase();
+        if (upper !== val) e.target.value = upper;
+        val = upper;
+      }
+      rows[i][f] = val; saveState();
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('change', handler);
+  });
+  container.querySelectorAll('button[data-act="remove"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = +e.currentTarget.dataset.i;
+      rows.splice(i, 1); renderRows(); saveState();
+    });
+  });
+}
 
-`;
+function updateChk() {
+  const ni = getEl('noIssuesChk'), na = getEl('noActionsChk');
+  ni.className = 'chk' + (noIssues ? ' on' : ''); ni.textContent = noIssues ? '✓' : '';
+  na.className = 'chk' + (noActions ? ' on' : ''); na.textContent = noActions ? '✓' : '';
+  const inc = getEl('incidents'), act = getEl('actions');
+  if (noIssues) { inc.value = 'Nothing to report.'; inc.disabled = true; }
+  else { if (inc.value === 'Nothing to report.') inc.value = ''; inc.disabled = false; }
+  if (noActions) { act.value = 'Nothing to report.'; act.disabled = true; }
+  else { if (act.value === 'Nothing to report.') act.value = ''; act.disabled = false; }
+}
+getEl('noIssuesLabel').addEventListener('click', e => { e.preventDefault(); noIssues = !noIssues; updateChk(); saveState(); });
+getEl('noActionsLabel').addEventListener('click', e => { e.preventDefault(); noActions = !noActions; updateChk(); saveState(); });
 
-  output += `--- MACHINE REPORT ---
-`;
+function getReportData() {
+  const filtered = rows.filter(r => (r.machine||'').trim());
+  const incText = noIssues ? 'Nothing to report.' : (getEl('incidents').value.trim() || 'Nothing to report.');
+  const actText = noActions ? 'Nothing to report.' : (getEl('actions').value.trim() || 'Nothing to report.');
+  return {
+    date: getEl('date').value, shift: getEl('shift').value,
+    by: getEl('by').value || '—', filtered, incText, actText
+  };
+}
 
-  let table = document.getElementById("machineTable");
-  for (let i = 1; i < table.rows.length; i++) {
-    let cells = table.rows[i].cells;
-    let machine = cells[0].querySelector("input").value;
-    let status = cells[1].querySelector("select").value;
-    let report = cells[2].querySelector("input").value;
+function buildMarkdown() {
+  const d = getReportData();
+  const lines = [];
+  lines.push('📋 **SHIFT HANDOVER REPORT**'); lines.push('');
+  lines.push('**Date:** ' + formatDate(d.date) + '  ');
+  lines.push('**Shift:** ' + d.shift + '  ');
+  lines.push('**Prepared by:** ' + d.by);
+  lines.push(''); lines.push('---'); lines.push('');
+  lines.push('**PRODUCTION STATUS**'); lines.push('');
+  if (d.filtered.length === 0) lines.push('Nothing to report.');
+  else d.filtered.forEach((r, i) => {
+    lines.push('**' + r.machine + '** — ' + r.status + '  ');
+    lines.push((r.report||'').trim() || 'No notes.');
+    if (i < d.filtered.length - 1) { lines.push(''); lines.push('---'); lines.push(''); }
+  });
+  lines.push(''); lines.push('---'); lines.push('');
+  lines.push('**INCIDENTS / ISSUES**'); lines.push(''); lines.push(d.incText);
+  lines.push(''); lines.push('---'); lines.push('');
+  lines.push('**ACTIONS REQUIRED**'); lines.push(''); lines.push(d.actText);
+  return lines.join('\n');
+}
 
-    if(machine) {
-      output += `${machine} | ${status} | ${report}
-`;
+function renderPreview() {
+  const d = getReportData();
+  let html = '';
+  html += '<div class="report-title">📋 SHIFT HANDOVER REPORT</div>';
+  html += '<div class="report-meta"><strong>Date:</strong> ' + escapeHtml(formatDate(d.date)) + '</div>';
+  html += '<div class="report-meta"><strong>Shift:</strong> ' + escapeHtml(d.shift) + '</div>';
+  html += '<div class="report-meta"><strong>Prepared by:</strong> ' + escapeHtml(d.by) + '</div>';
+  html += '<hr />';
+  html += '<div class="report-section-head">Production Status</div>';
+  if (d.filtered.length === 0) html += '<div class="report-body-text empty">Nothing to report.</div>';
+  else d.filtered.forEach((r, i) => {
+    html += '<div>';
+    html += '<span class="report-machine-name">' + escapeHtml(r.machine) + '</span>';
+    html += '<span class="report-machine-status"> — ' + escapeHtml(r.status) + '</span>';
+    html += '<div class="report-machine-notes">' + escapeHtml((r.report||'').trim() || 'No notes.') + '</div>';
+    html += '</div>';
+    if (i < d.filtered.length - 1) html += '<hr class="dashed" />';
+  });
+  html += '<hr />';
+  html += '<div class="report-section-head">Incidents / Issues</div>';
+  html += '<div class="report-body-text' + (d.incText === 'Nothing to report.' ? ' empty' : '') + '">' + escapeHtml(d.incText) + '</div>';
+  html += '<hr />';
+  html += '<div class="report-section-head">Actions Required</div>';
+  html += '<div class="report-body-text' + (d.actText === 'Nothing to report.' ? ' empty' : '') + '">' + escapeHtml(d.actText) + '</div>';
+  getEl('preview').innerHTML = html;
+}
+
+// ========== IMAGE RENDERING ==========
+function renderImageBlob() {
+  return new Promise(async function(resolve) {
+    if (document.fonts && document.fonts.ready) {
+      try { await document.fonts.ready; } catch(e){}
     }
-  }
+    const d = getReportData();
+    const dpr = (window.devicePixelRatio > 1) ? 2 : 1.5;
+    const width = 760;
+    const pad = 40;
+    const contentW = width - pad * 2;
+    const FS = '-apple-system, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", Arial, sans-serif';
+    const F = {
+      title: '700 22px ' + FS, section: '700 12px ' + FS,
+      metaKey: '600 14.5px ' + FS, metaVal: '400 14.5px ' + FS,
+      machineName: '700 16px ' + FS, machineStatus: '400 16px ' + FS,
+      notes: '400 14px ' + FS, body: '400 14px ' + FS,
+      bodyItalic: 'italic 400 14px ' + FS
+    };
 
-  output += `
---- INCIDENTS ---
-`;
-  if (document.getElementById("noIssues").checked) {
-    output += "✔ No issues
-";
-  } else {
-    output += document.getElementById("incidents").value + "
-";
-  }
+    const meas = document.createElement('canvas').getContext('2d');
+    function wrap(text, font, maxW) {
+      meas.font = font;
+      const words = String(text).split(/\s+/);
+      const lines = []; let line = '';
+      for (const w of words) {
+        const test = line ? line + ' ' + w : w;
+        if (meas.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+        else line = test;
+      }
+      if (line) lines.push(line);
+      return lines.length ? lines : [''];
+    }
 
-  output += `
---- ACTIONS REQUIRED ---
-`;
-  if (document.getElementById("noActions").checked) {
-    output += "✔ No actions required
-";
-  } else {
-    output += document.getElementById("actions").value + "
-";
-  }
+    let h = pad;
+    h += 28 + 18;                 // title
+    h += 3 * 24;                  // meta
+    h += 14 + 1 + 22;             // gap + divider + gap
+    h += 18 + 14;                 // section head
+    if (d.filtered.length === 0) h += 22;
+    else d.filtered.forEach((r, i) => {
+      h += 24;
+      const notes = (r.report||'').trim() || 'No notes.';
+      h += wrap(notes, F.notes, contentW).length * 20;
+      if (i < d.filtered.length - 1) h += 14 + 1 + 14;
+    });
+    h += 22 + 1 + 22;
+    h += 18 + 14;
+    h += wrap(d.incText, F.body, contentW).length * 20;
+    h += 22 + 1 + 22;
+    h += 18 + 14;
+    h += wrap(d.actText, F.body, contentW).length * 20;
+    h += pad;
 
-  document.getElementById("output").innerText = output;
+    const canvas = document.createElement('canvas');
+    canvas.width = width * dpr; canvas.height = h * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.textBaseline = 'alphabetic';
+
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, h);
+    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, width - 1, h - 1);
+
+    let y = pad;
+    ctx.fillStyle = '#111'; ctx.font = F.title;
+    ctx.fillText('📋 SHIFT HANDOVER REPORT', pad, y + 20);
+    y += 28 + 18;
+
+    function drawMeta(key, val) {
+      ctx.fillStyle = '#111'; ctx.font = F.metaKey;
+      const kw = ctx.measureText(key + ' ').width;
+      ctx.fillText(key, pad, y + 16);
+      ctx.fillStyle = '#374151'; ctx.font = F.metaVal;
+      ctx.fillText(val, pad + kw, y + 16);
+      y += 24;
+    }
+    drawMeta('Date:', formatDate(d.date));
+    drawMeta('Shift:', d.shift);
+    drawMeta('Prepared by:', d.by);
+
+    y += 14;
+    ctx.strokeStyle = '#d1d5db'; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
+    y += 1 + 22;
+
+    ctx.fillStyle = '#111'; ctx.font = F.section;
+    ctx.fillText('PRODUCTION STATUS', pad, y + 13);
+    y += 18 + 14;
+
+    if (d.filtered.length === 0) {
+      ctx.fillStyle = '#9ca3af'; ctx.font = F.bodyItalic;
+      ctx.fillText('Nothing to report.', pad, y + 14);
+      y += 22;
+    } else {
+      d.filtered.forEach((r, i) => {
+        ctx.fillStyle = '#111'; ctx.font = F.machineName;
+        const nw = ctx.measureText(r.machine).width;
+        ctx.fillText(r.machine, pad, y + 18);
+        ctx.fillStyle = '#374151'; ctx.font = F.machineStatus;
+        ctx.fillText(' — ' + r.status, pad + nw, y + 18);
+        y += 24;
+
+        const notes = (r.report||'').trim() || 'No notes.';
+        const noteLines = wrap(notes, F.notes, contentW);
+        ctx.fillStyle = '#4b5563'; ctx.font = F.notes;
+        noteLines.forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
+
+        if (i < d.filtered.length - 1) {
+          y += 14;
+          ctx.strokeStyle = '#d1d5db'; ctx.setLineDash([3, 4]);
+          ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
+          ctx.setLineDash([]);
+          y += 1 + 14;
+        }
+      });
+    }
+
+    y += 22;
+    ctx.strokeStyle = '#d1d5db';
+    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
+    y += 1 + 22;
+
+    ctx.fillStyle = '#111'; ctx.font = F.section;
+    ctx.fillText('INCIDENTS / ISSUES', pad, y + 13);
+    y += 18 + 14;
+    const incNothing = d.incText === 'Nothing to report.';
+    ctx.fillStyle = incNothing ? '#9ca3af' : '#374151';
+    ctx.font = incNothing ? F.bodyItalic : F.body;
+    wrap(d.incText, F.body, contentW).forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
+
+    y += 22;
+    ctx.strokeStyle = '#d1d5db';
+    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
+    y += 1 + 22;
+
+    ctx.fillStyle = '#111'; ctx.font = F.section;
+    ctx.fillText('ACTIONS REQUIRED', pad, y + 13);
+    y += 18 + 14;
+    const actNothing = d.actText === 'Nothing to report.';
+    ctx.fillStyle = actNothing ? '#9ca3af' : '#374151';
+    ctx.font = actNothing ? F.bodyItalic : F.body;
+    wrap(d.actText, F.body, contentW).forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
+
+    canvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
+  });
 }
 
-function copyReport() {
-  let text = document.getElementById("output").innerText;
-  navigator.clipboard.writeText(text);
+async function shareAsImage() {
+  const btn = getEl('imgBtn');
+  const origText = btn.textContent;
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+
+  try {
+    const blob = await renderImageBlob();
+    const d = getReportData();
+    const filename = 'handover-' + d.date + '-' + d.shift.toLowerCase() + '.png';
+
+    // Try Web Share API (native iOS share sheet)
+    try {
+      const file = new File([blob], filename, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Shift Handover Report' });
+        return;
+      }
+    } catch(e) {
+      if (e && e.name === 'AbortError') return;
+    }
+
+    // Fallback: show image modal
+    const url = URL.createObjectURL(blob);
+    getEl('modalImg').src = url;
+    getEl('modalDownload').href = url;
+    getEl('modalDownload').download = filename;
+    getEl('imgModal').style.display = 'flex';
+  } catch(e) {
+    alert('Could not create image: ' + (e && e.message ? e.message : e));
+  } finally {
+    btn.textContent = origText;
+    btn.disabled = false;
+  }
+}
+
+getEl('modalClose').addEventListener('click', () => {
+  getEl('imgModal').style.display = 'none';
+  const src = getEl('modalImg').src;
+  if (src.startsWith('blob:')) URL.revokeObjectURL(src);
+  getEl('modalImg').src = '';
+});
+getEl('imgModal').addEventListener('click', e => {
+  if (e.target === getEl('imgModal')) getEl('modalClose').click();
+});
+getEl('imgBtn').addEventListener('click', shareAsImage);
+
+getEl('generate').addEventListener('click', () => {
+  renderPreview();
+  getEl('outputCard').style.display = 'block';
+  const btn = getEl('copyBtn');
+  btn.textContent = 'Copy'; btn.classList.remove('copied');
+  setTimeout(() => { getEl('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+});
+
+getEl('copyBtn').addEventListener('click', () => {
+  const text = buildMarkdown();
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(fallback);
+  else fallback();
+  const btn = getEl('copyBtn');
+  btn.textContent = '✓ Copied'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
+});
+
+getEl('addRow').addEventListener('click', () => {
+  rows.push({ machine: '', status: '✅ Running', report: '' });
+  renderRows(); saveState();
+});
+
+['date','shift','by','incidents','actions'].forEach(id => {
+  getEl(id).addEventListener('input', saveState);
+  getEl(id).addEventListener('change', saveState);
+});
+
+(function init() {
+  const saved = loadState();
+  if (saved) {
+    getEl('date').value = saved.date || new Date().toISOString().slice(0,10);
+    getEl('shift').value = saved.shift || 'Morning';
+    getEl('by').value = saved.by || '';
+    getEl('incidents').value = saved.incidents || '';
+    getEl('actions').value = saved.actions || '';
+    rows = (saved.rows && saved.rows.length) ? saved.rows : [
+      { machine: '', status: '✅ Running', report: '' },
+      { machine: '', status: '✅ Running', report: '' },
+      { machine: '', status: '✅ Running', report: '' }
+    ];
+    noIssues = !!saved.noIssues; noActions = !!saved.noActions;
+  } else {
+    getEl('date').value = new Date().toISOString().slice(0,10);
+    rows = [
+      { machine: '', status: '✅ Running', report: '' },
+      { machine: '', status: '✅ Running', report: '' },
+      { machine: '', status: '✅ Running', report: '' }
+    ];
+  }
+  renderRows(); updateChk();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
 }
 </script>
 
