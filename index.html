@@ -1,541 +1,801 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Handover">
-<meta name="theme-color" content="#1f2937">
-<title>Shift Handover</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='32' fill='%231f2937'/%3E%3Ctext x='90' y='118' font-family='monospace' font-size='90' font-weight='700' fill='%23fff' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh; background: #f5f6f8; color: #1f2937;
-    font-family: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
-    padding: 20px 16px 60px;
-    padding-top: calc(20px + env(safe-area-inset-top));
-    padding-bottom: calc(60px + env(safe-area-inset-bottom));
-    -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
-  }
-  input, select, textarea {
-    background: #fff; border: 1px solid #d1d5db; color: #111827;
-    border-radius: 4px; padding: 9px 11px; font-family: inherit;
-    font-size: 14px; width: 100%; outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  input:focus, select:focus, textarea:focus {
-    border-color: #2d5a87; box-shadow: 0 0 0 3px rgba(45,90,135,0.12);
-  }
-  textarea { resize: vertical; min-height: 70px; font-family: inherit; }
-  textarea:disabled { background: #f3f4f6; color: #9ca3af; }
-  .label { font-size: 10.5px; font-weight: 600; color: #4b5563; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
-  .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
-  .btn { border: none; border-radius: 4px; padding: 10px 18px; font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-  .btn-primary { background: #2d5a87; color: #fff; border: 1px solid #244a72; }
-  .btn-primary:active { background: #1d3b5c; }
-  .btn-ghost { background: #fff; color: #4b5563; border: 1px solid #d1d5db; }
-  .btn-secondary { background: #fff; color: #2d5a87; border: 1px solid #2d5a87; font-size: 13px; padding: 7px 12px; }
-  .btn-secondary:active { background: #f0f5fa; }
-  .btn-copy { background: #2d5a87; color: #fff; font-size: 13px; padding: 7px 12px; border: 1px solid #244a72; }
-  .btn-copy.copied { background: #0f766e; border-color: #0d5f5a; }
-  .btn-remove { background: transparent; color: #9ca3af; border: 1px solid #e5e7eb; padding: 0; width: 30px; height: 30px; font-size: 13px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-  .row-grid { display: grid; grid-template-columns: 1.1fr 1fr 1.6fr 30px; gap: 6px; align-items: center; margin-bottom: 7px; }
-  .col-head { font-size: 10.5px; font-weight: 600; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase; padding-bottom: 4px; }
-  .section-title { font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
-  .chk-wrap { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; font-size: 11px; font-weight: 600; color: #4b5563; letter-spacing: 0.04em; }
-  .chk { width: 18px; height: 18px; border: 1.5px solid #9ca3af; border-radius: 3px; display: flex; align-items: center; justify-content: center; background: #fff; color: #fff; font-size: 13px; font-weight: 700; }
-  .chk.on { background: #2d5a87; border-color: #2d5a87; }
-  .brand { display: flex; align-items: center; gap: 12px; padding: 4px 0 20px; border-bottom: 2px solid #1f2937; margin-bottom: 22px; }
-  .brand-mark { width: 38px; height: 38px; background: #1f2937; color: #fff; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; }
-  .brand-title { font-size: 17px; font-weight: 700; color: #111827; line-height: 1.1; }
-  .brand-sub { font-size: 11px; color: #6b7280; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
-  .offline-badge { display: inline-block; font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.05em; text-transform: uppercase; margin-left: 6px; background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-  .report { background: #fff; border: 1px solid #e5e7eb; border-radius: 4px; padding: 22px 20px; font-family: 'Segoe UI', -apple-system, sans-serif; color: #1f2937; line-height: 1.55; }
-  .report-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 14px; }
-  .report-meta { font-size: 13.5px; color: #374151; line-height: 1.7; }
-  .report-meta strong { color: #111; font-weight: 600; }
-  .report hr { border: none; border-top: 1px solid #d1d5db; margin: 16px 0; }
-  .report hr.dashed { border-top: 1px dashed #d1d5db; margin: 12px 0; }
-  .report-section-head { font-size: 11.5px; font-weight: 700; color: #111; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-  .report-machine-name { font-weight: 700; color: #111; font-size: 14px; }
-  .report-machine-status { color: #374151; font-size: 14px; }
-  .report-machine-notes { color: #4b5563; font-size: 13.5px; margin-top: 3px; }
-  .report-body-text { color: #374151; font-size: 13.5px; }
-  .report-body-text.empty { color: #9ca3af; font-style: italic; }
-  .help { margin-top: 14px; font-size: 11px; color: #6b7280; font-family: 'IBM Plex Mono', monospace; }
-  .btn-row { display: flex; gap: 8px; }
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; overflow: auto; }
-  .modal-inner { background: #fff; padding: 16px; border-radius: 8px; max-width: 100%; max-height: 90vh; overflow: auto; text-align: center; }
-  .modal-inner img { max-width: 100%; border: 1px solid #e5e7eb; margin-bottom: 10px; }
-  .modal-hint { font-size: 13px; color: #4b5563; margin-bottom: 10px; }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Shift Handover</title>
+  <link rel="manifest" href="./manifest.json"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Handover"/>
+  <meta name="theme-color" content="#1b2e4b"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #1b2e4b; --navy-mid: #243d61; --navy-light: #2e5082;
+      --accent: #3b82f6; --green: #16a34a; --green-bg: #dcfce7;
+      --amber: #d97706; --amber-bg: #fef3c7; --red: #dc2626; --red-bg: #fee2e2;
+      --surface: #fff; --surface-2: #f8fafc; --surface-3: #f1f5f9;
+      --border: #e2e8f0; --border-mid: #cbd5e1;
+      --text-primary: #0f172a; --text-secondary: #475569; --text-muted: #94a3b8;
+      --radius: 12px; --radius-sm: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    }
+    html, body { height: 100%; background: var(--surface-3); font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif; color: var(--text-primary); -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+
+    /* HEADER */
+    .header { position: sticky; top: 0; z-index: 100; background: var(--navy); padding-top: env(safe-area-inset-top); }
+    .install-banner { background: var(--navy-mid); padding: 10px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .install-banner.hidden { display: none; }
+    .install-text { flex: 1; font-size: 13px; color: rgba(255,255,255,.8); }
+    .install-text strong { color: #fff; }
+    .install-btn { padding: 7px 14px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .install-dismiss { background: none; border: none; color: rgba(255,255,255,.4); font-size: 22px; cursor: pointer; line-height: 1; padding: 0 2px; }
+    .header-inner { display: flex; align-items: center; gap: 14px; height: 64px; padding: 0 24px; }
+    .header-icon { width: 40px; height: 40px; background: var(--navy-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .header-icon svg { width: 22px; height: 22px; color: #fff; }
+    .header-titles { flex: 1; }
+    .header-title { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -.3px; }
+    .header-sub { font-size: 11px; color: rgba(255,255,255,.45); letter-spacing: .6px; text-transform: uppercase; margin-top: 2px; }
+    .offline-badge { display: flex; align-items: center; gap: 5px; background: rgba(22,163,74,.15); border: 1px solid rgba(22,163,74,.3); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 600; color: #4ade80; letter-spacing: .3px; text-transform: uppercase; }
+    .offline-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+    /* MAIN */
+    .main { max-width: 860px; margin: 0 auto; padding: 24px 20px calc(env(safe-area-inset-bottom) + 32px); display: flex; flex-direction: column; gap: 16px; }
+
+    /* CARD */
+    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .card-header { padding: 14px 20px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); }
+    .card-body { padding: 20px; }
+
+    /* FORM */
+    label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px; }
+    input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text-primary); background: var(--surface); -webkit-appearance: none; appearance: none; transition: border-color .15s, box-shadow .15s; font-family: inherit; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+    textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; }
+
+    /* WORKING AREA */
+    .area-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .area-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 14px 8px; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); cursor: pointer; transition: all .15s; -webkit-tap-highlight-color: transparent; touch-action: manipulation; min-height: 90px; position: relative; }
+    .area-btn:active { transform: scale(.97); }
+    .area-btn.selected { border-color: var(--navy); background: var(--navy); }
+    .area-btn.selected .area-label { color: #fff; }
+    .area-btn.selected .area-icon-wrap svg { filter: brightness(10); }
+    .area-check { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; background: var(--green); border-radius: 50%; display: none; align-items: center; justify-content: center; }
+    .area-btn.selected .area-check { display: flex; }
+    .area-check svg { width: 10px; height: 10px; color: #fff; }
+    .area-icon-wrap { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+    .area-icon-wrap svg { width: 44px; height: 44px; }
+    .area-label { font-size: 13px; font-weight: 700; color: var(--text-primary); letter-spacing: -.2px; }
+    .area-sub { font-size: 10px; color: var(--text-muted); text-align: center; letter-spacing: .2px; line-height: 1.3; }
+    .area-btn.selected .area-sub { color: rgba(255,255,255,.6); }
+
+    /* MACHINE TABLE */
+    .machine-table { width: 100%; border-collapse: collapse; }
+    .machine-table th { font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); padding: 10px 12px; text-align: left; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+    .machine-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .machine-table tr:last-of-type td { border-bottom: none; }
+    .machine-table input[type="text"] { padding: 8px 10px; font-size: 14px; border-radius: 6px; }
+    .machine-table select { padding: 7px 28px 7px 10px; font-size: 13px; font-weight: 600; border-radius: 6px; }
+    .st-running { color: var(--green); border-color: #bbf7d0 !important; background: var(--green-bg) !important; }
+    .st-stopped { color: var(--red); border-color: #fecaca !important; background: var(--red-bg) !important; }
+    .st-maintenance { color: var(--amber); border-color: #fde68a !important; background: var(--amber-bg) !important; }
+    .st-idle { color: var(--text-secondary); border-color: var(--border) !important; background: var(--surface-2) !important; }
+    .st-other { color: #1d4ed8; border-color: #bfdbfe !important; background: #dbeafe !important; }
+    .remove-btn { width: 32px; height: 32px; border: none; border-radius: 6px; background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; margin: auto; }
+    .remove-btn:hover { background: var(--red-bg); color: var(--red); }
+    .add-machine-btn { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: none; border: none; border-top: 1px solid var(--border); color: var(--accent); font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: background .15s; -webkit-tap-highlight-color: transparent; }
+    .add-machine-btn:hover { background: #eff6ff; }
+
+    /* NTR */
+    .ntr-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: .4px; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
+    .ntr-box { width: 18px; height: 18px; border: 2px solid var(--border-mid); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--surface); transition: all .15s; }
+    .ntr-box.checked { background: var(--green); border-color: var(--green); }
+    .ntr-box svg { color: #fff; width: 11px; height: 11px; }
+    .section-dimmed textarea, .section-dimmed input { opacity: .35; pointer-events: none; }
+
+    /* GENERATE */
+    .generate-btn { width: 100%; padding: 18px; background: var(--navy); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 16px rgba(27,46,75,.3); }
+    .generate-btn:hover { background: var(--navy-light); }
+    .generate-btn:active { transform: scale(.99); }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(6px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .modal-overlay.visible { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 620px; box-shadow: 0 24px 64px rgba(0,0,0,.25); transform: translateY(24px); transition: transform .25s; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden; }
+    .modal-overlay.visible .modal { transform: translateY(0); }
+    .modal-top { padding: 24px 24px 16px; display: flex; align-items: flex-start; gap: 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .modal-icon { width: 48px; height: 48px; background: var(--green-bg); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .modal-icon svg { width: 24px; height: 24px; color: var(--green); }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 3px; }
+    .modal-sub { font-size: 13px; color: var(--text-secondary); }
+    .modal-canvas-wrap { flex: 1; overflow-y: auto; padding: 16px 24px; background: var(--surface-3); display: flex; justify-content: center; }
+    #reportCanvas { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,.12); max-width: 100%; height: auto; }
+    .modal-actions { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-shrink: 0; }
+    .modal-btn { flex: 1; padding: 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: all .15s; -webkit-tap-highlight-color: transparent; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .modal-btn:active { transform: scale(.98); }
+    .modal-btn-secondary { background: var(--surface-3); color: var(--text-secondary); }
+    .modal-btn-primary { background: var(--navy); color: #fff; }
+    .modal-btn-green { background: var(--green); color: #fff; }
+
+    @media (max-width: 600px) {
+      .row { grid-template-columns: 1fr; }
+      .area-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
 <body>
 
-<div class="brand">
-  <div class="brand-mark">H—</div>
-  <div>
-    <div class="brand-title">Shift Handover <span class="offline-badge">● Offline Ready</span></div>
-    <div class="brand-sub">Production / Teams Export</div>
+<div class="header">
+  <div class="install-banner hidden" id="installBanner">
+    <div class="install-text"><strong>Add to Home Screen</strong> — works offline</div>
+    <button class="install-btn" id="installBtn">Install</button>
+    <button class="install-dismiss" id="dismissInstall">×</button>
+  </div>
+  <div class="header-inner">
+    <div class="header-icon">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <div class="header-title">Shift Handover</div>
+      <div class="header-sub" id="headerSub">SELECT WORKING AREA</div>
+    </div>
+    <div class="offline-badge"><div class="offline-dot"></div><span>Offline Ready</span></div>
   </div>
 </div>
 
-<div class="card">
-  <div class="section-title"><span>Shift Information</span></div>
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-    <div><div class="label">Date</div><input type="date" id="date" /></div>
-    <div><div class="label">Shift</div><select id="shift"><option>Morning</option><option>Night</option></select></div>
-  </div>
-  <div><div class="label">Prepared By</div><input id="by" placeholder="Your name" /></div>
-</div>
+<div class="main">
 
-<div class="card">
-  <div class="section-title"><span>Machine Status</span></div>
-  <div class="row-grid" style="margin-bottom: 6px;">
-    <div class="col-head">Machine</div><div class="col-head">Status</div><div class="col-head">Report</div><div></div>
-  </div>
-  <div id="rows"></div>
-  <button class="btn btn-ghost" id="addRow" style="margin-top: 8px; font-size: 13px; padding: 8px 14px;">+ Add Machine</button>
-</div>
-
-<div class="card">
-  <div class="section-title">
-    <span>Incidents / Issues</span>
-    <label class="chk-wrap" id="noIssuesLabel"><span class="chk" id="noIssuesChk"></span><span>Nothing to report</span></label>
-  </div>
-  <textarea id="incidents" rows="3" placeholder="Describe any incidents, faults, or quality issues during the shift..."></textarea>
-</div>
-
-<div class="card">
-  <div class="section-title">
-    <span>Actions Required</span>
-    <label class="chk-wrap" id="noActionsLabel"><span class="chk" id="noActionsChk"></span><span>Nothing to report</span></label>
-  </div>
-  <textarea id="actions" rows="3" placeholder="List any tasks or follow-ups for the incoming shift..."></textarea>
-</div>
-
-<button class="btn btn-primary" id="generate" style="width: 100%; padding: 13px; font-size: 14px; margin-bottom: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;">Generate Handover</button>
-
-<div class="card" id="outputCard" style="display: none;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5e7eb; gap: 8px;">
-    <div style="font-size: 11px; font-weight: 700; color: #374151; letter-spacing: 0.12em; text-transform: uppercase;">Report Preview</div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" id="imgBtn">📷 Save Image</button>
-      <button class="btn btn-copy" id="copyBtn">Copy</button>
+  <!-- SHIFT INFO -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Shift Information</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:16px;">
+      <div class="row">
+        <div class="field"><label>Date</label><input type="date" id="shiftDate"/></div>
+        <div class="field"><label>Shift</label>
+          <select id="shiftType">
+            <option value="Morning">Morning</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Prepared By</label><input type="text" id="preparedBy" placeholder="Your name"/></div>
     </div>
   </div>
-  <div class="report" id="preview"></div>
-  <div class="help">→ <strong>Save Image</strong> opens your share sheet (send directly to Teams). <strong>Copy</strong> pastes as text.</div>
-</div>
 
-<div class="modal" id="imgModal" style="display:none;">
-  <div class="modal-inner">
-    <div class="modal-hint">Long-press the image to save to Photos, or tap Download.</div>
-    <img id="modalImg" src="" alt="Handover Report" />
-    <div style="display: flex; gap: 8px; justify-content: center;">
-      <a id="modalDownload" href="#" download="handover.png" class="btn btn-primary" style="text-decoration: none; display: inline-block;">Download</a>
-      <button class="btn btn-ghost" id="modalClose">Close</button>
+  <!-- WORKING AREA -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Working Area</span>
+      <span style="font-size:11px;color:var(--text-muted);font-weight:500;">Select all that apply</span>
+    </div>
+    <div class="card-body">
+      <div class="area-grid">
+
+        <!-- BAY 1 -->
+        <button class="area-btn" data-area="Bay 1" onclick="toggleArea(this)">
+          <div class="area-check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          <div class="area-icon-wrap">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#334155" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Hopper -->
+              <path d="M14 4 L11 11 L17 11 Z" stroke-width="1.4" fill="none"/>
+              <!-- Barrel body -->
+              <rect x="3" y="18" width="22" height="8" rx="1.5" stroke-width="1.4" fill="none"/>
+              <!-- Screw thread lines inside barrel -->
+              <line x1="7"  y1="18" x2="7"  y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="11" y1="18" x2="11" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="15" y1="18" x2="15" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="19" y1="18" x2="19" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <!-- Nozzle tip -->
+              <path d="M25 20.5 L28 22 L25 23.5" stroke-width="1.4" fill="none"/>
+              <!-- Fixed platen -->
+              <rect x="29" y="16" width="4" height="12" rx="1" stroke-width="1.4" fill="none"/>
+              <!-- Moving platen -->
+              <rect x="35" y="17.5" width="4" height="9" rx="1" stroke-width="1.4" fill="none"/>
+              <!-- Tie bar top -->
+              <line x1="29" y1="17.5" x2="39" y2="17.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <!-- Tie bar bottom -->
+              <line x1="29" y1="26.5" x2="39" y2="26.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <!-- Base -->
+              <rect x="2" y="30" width="40" height="4" rx="1" stroke-width="1.4" fill="none"/>
+              <!-- Hopper stem -->
+              <line x1="14" y1="11" x2="14" y2="18" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <span class="area-label">Bay 1</span>
+          <span class="area-sub">Injection Moulding</span>
+        </button>
+
+        <!-- BAY 2 -->
+        <button class="area-btn" data-area="Bay 2" onclick="toggleArea(this)">
+          <div class="area-check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          <div class="area-icon-wrap">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#334155" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 4 L11 11 L17 11 Z" stroke-width="1.4" fill="none"/>
+              <rect x="3" y="18" width="22" height="8" rx="1.5" stroke-width="1.4" fill="none"/>
+              <line x1="7"  y1="18" x2="7"  y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="11" y1="18" x2="11" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="15" y1="18" x2="15" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="19" y1="18" x2="19" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <path d="M25 20.5 L28 22 L25 23.5" stroke-width="1.4" fill="none"/>
+              <rect x="29" y="16" width="4" height="12" rx="1" stroke-width="1.4" fill="none"/>
+              <rect x="35" y="17.5" width="4" height="9" rx="1" stroke-width="1.4" fill="none"/>
+              <line x1="29" y1="17.5" x2="39" y2="17.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <line x1="29" y1="26.5" x2="39" y2="26.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <rect x="2" y="30" width="40" height="4" rx="1" stroke-width="1.4" fill="none"/>
+              <line x1="14" y1="11" x2="14" y2="18" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <span class="area-label">Bay 2</span>
+          <span class="area-sub">Injection Moulding</span>
+        </button>
+
+        <!-- BAY 3 -->
+        <button class="area-btn" data-area="Bay 3" onclick="toggleArea(this)">
+          <div class="area-check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          <div class="area-icon-wrap">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#334155" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 4 L11 11 L17 11 Z" stroke-width="1.4" fill="none"/>
+              <rect x="3" y="18" width="22" height="8" rx="1.5" stroke-width="1.4" fill="none"/>
+              <line x1="7"  y1="18" x2="7"  y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="11" y1="18" x2="11" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="15" y1="18" x2="15" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <line x1="19" y1="18" x2="19" y2="26" stroke-width="1" stroke-dasharray="1.5 2"/>
+              <path d="M25 20.5 L28 22 L25 23.5" stroke-width="1.4" fill="none"/>
+              <rect x="29" y="16" width="4" height="12" rx="1" stroke-width="1.4" fill="none"/>
+              <rect x="35" y="17.5" width="4" height="9" rx="1" stroke-width="1.4" fill="none"/>
+              <line x1="29" y1="17.5" x2="39" y2="17.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <line x1="29" y1="26.5" x2="39" y2="26.5" stroke-width="1" stroke-dasharray="2 2"/>
+              <rect x="2" y="30" width="40" height="4" rx="1" stroke-width="1.4" fill="none"/>
+              <line x1="14" y1="11" x2="14" y2="18" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <span class="area-label">Bay 3</span>
+          <span class="area-sub">Injection Moulding</span>
+        </button>
+
+        <!-- CELL -->
+        <button class="area-btn" data-area="Cell" onclick="toggleArea(this)">
+          <div class="area-check"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+          <div class="area-icon-wrap">
+            <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#334155" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Conveyor rollers -->
+              <circle cx="6"  cy="33" r="3" stroke-width="1.4"/>
+              <circle cx="38" cy="33" r="3" stroke-width="1.4"/>
+              <!-- Belt top & bottom -->
+              <line x1="6" y1="30" x2="38" y2="30" stroke-width="1.4"/>
+              <line x1="6" y1="36" x2="38" y2="36" stroke-width="1.4"/>
+              <!-- Box A -->
+              <rect x="7" y="21" width="9" height="9" rx="1" stroke-width="1.4"/>
+              <line x1="11.5" y1="21" x2="11.5" y2="30" stroke-width="1"/>
+              <!-- Box B -->
+              <rect x="19" y="21" width="9" height="9" rx="1" stroke-width="1.4"/>
+              <line x1="23.5" y1="21" x2="23.5" y2="30" stroke-width="1"/>
+              <!-- Box C (partial, arriving) -->
+              <rect x="31" y="21" width="9" height="9" rx="1" stroke-width="1.4"/>
+              <line x1="35.5" y1="21" x2="35.5" y2="30" stroke-width="1"/>
+              <!-- Robot arm vertical -->
+              <line x1="22" y1="4" x2="22" y2="16" stroke-width="1.6"/>
+              <!-- Robot arm horizontal -->
+              <line x1="10" y1="9" x2="34" y2="9" stroke-width="1.4"/>
+              <!-- End effector / gripper -->
+              <line x1="10" y1="9"  x2="10" y2="16" stroke-width="1.4"/>
+              <line x1="8"  y1="16" x2="12" y2="16" stroke-width="1.6"/>
+              <!-- Pivot dot -->
+              <circle cx="22" cy="4" r="1.5" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <span class="area-label">Cell</span>
+          <span class="area-sub">Auto Packing System</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MACHINE STATUS -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">Machine Status</span></div>
+    <div style="overflow-x:auto;">
+      <table class="machine-table" id="machineTable">
+        <thead>
+          <tr>
+            <th style="width:30%">Machine</th>
+            <th style="width:22%">Status</th>
+            <th>Report / Notes</th>
+            <th style="width:44px"></th>
+          </tr>
+        </thead>
+        <tbody id="machineBody"></tbody>
+      </table>
+    </div>
+    <button class="add-machine-btn" onclick="addMachine()">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+      Add Machine
+    </button>
+  </div>
+
+  <!-- INCIDENTS -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Incidents / Issues</span>
+      <label class="ntr-label" onclick="toggleNTR('incident')">
+        <div class="ntr-box" id="ntrIncident"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+        Nothing to Report
+      </label>
+    </div>
+    <div class="card-body" id="incidentBody">
+      <textarea id="incidentText" placeholder="Describe any incidents, injuries, or safety issues during the shift…"></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Actions Required</span>
+      <label class="ntr-label" onclick="toggleNTR('actions')">
+        <div class="ntr-box" id="ntrActions"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+        Nothing to Report
+      </label>
+    </div>
+    <div class="card-body" id="actionsBody">
+      <textarea id="actionsText" placeholder="List any tasks or follow-ups for the incoming shift…"></textarea>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generateReport()">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    Generate Handover Image
+  </button>
+
+</div><!-- /main -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div>
+        <div class="modal-title">Handover Report</div>
+        <div class="modal-sub" id="modalSub">Ready to save or share</div>
+      </div>
+    </div>
+    <div class="modal-canvas-wrap">
+      <canvas id="reportCanvas"></canvas>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-secondary" onclick="closeModal()">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        Close
+      </button>
+      <button class="modal-btn modal-btn-secondary" onclick="copyImage()">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path stroke-linecap="round" d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy Image
+      </button>
+      <button class="modal-btn modal-btn-primary" onclick="saveImage()">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Save Image
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-const STATUSES = ["✅ Running", "⚠️ Issue", "🔴 Down", "🔧 Maintenance"];
-let rows = [];
-let noIssues = false, noActions = false;
-const STORAGE_KEY = 'handover-state-v3';
+// ── STATE ──
+let machines = [
+  { id:1, name:'', status:'running', notes:'' },
+  { id:2, name:'', status:'running', notes:'' },
+  { id:3, name:'', status:'running', notes:'' },
+];
+let machineCounter = 4;
+let ntrState = { incident: false, actions: false };
+let selectedAreas = [];
+let deferredPrompt = null;
 
-function getEl(id) { return document.getElementById(id); }
-function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function escapeAttr(s) { return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-function formatDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso + 'T00:00:00');
-  if (isNaN(d)) return iso;
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  applyAutoDateShift();
+  loadState();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) applyAutoDateShift(); });
+  renderMachines();
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+
+  ['shiftDate','shiftType','preparedBy','incidentText','actionsText'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('change', saveState); el.addEventListener('input', saveState); }
+  });
+});
+
+// ── AUTO DATE + SHIFT ──
+function applyAutoDateShift() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  document.getElementById('shiftDate').value = `${y}-${m}-${d}`;
+  const mins = now.getHours() * 60 + now.getMinutes();
+  // Morning: 07:01–19:00 · Night: 19:01–07:00
+  const isMorning = mins >= 421 && mins <= 1140;
+  document.getElementById('shiftType').value = isMorning ? 'Morning' : 'Night';
 }
 
+// ── PWA ──
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  if (!localStorage.getItem('installDismissed')) document.getElementById('installBanner').classList.remove('hidden');
+});
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; document.getElementById('installBanner').classList.add('hidden'); }
+  else alert('Tap the Share button (□↑) in Safari, then "Add to Home Screen".');
+});
+document.getElementById('dismissInstall').addEventListener('click', () => { document.getElementById('installBanner').classList.add('hidden'); localStorage.setItem('installDismissed','1'); });
+if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone && !localStorage.getItem('installDismissed')) document.getElementById('installBanner').classList.remove('hidden');
+
+// ── AREA TOGGLE ──
+function toggleArea(btn) {
+  const area = btn.dataset.area;
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    selectedAreas = selectedAreas.filter(a => a !== area);
+  } else {
+    btn.classList.add('selected');
+    selectedAreas.push(area);
+  }
+  updateHeaderSub();
+  saveState();
+}
+function updateHeaderSub() {
+  const sub = document.getElementById('headerSub');
+  sub.textContent = selectedAreas.length ? selectedAreas.join(' · ').toUpperCase() : 'SELECT WORKING AREA';
+}
+
+// ── NTR ──
+function toggleNTR(section) {
+  ntrState[section] = !ntrState[section];
+  document.getElementById('ntr' + capitalize(section)).classList.toggle('checked', ntrState[section]);
+  document.getElementById(section + 'Body').classList.toggle('section-dimmed', ntrState[section]);
+  saveState();
+}
+
+// ── MACHINES ──
+function addMachine() { machines.push({id:machineCounter++,name:'',status:'running',notes:''}); renderMachines(); }
+function removeMachine(id) { if (machines.length <= 1) return; machines = machines.filter(m => m.id !== id); renderMachines(); }
+function updateMachine(id, field, value) { const m = machines.find(m => m.id === id); if (m) { m[field] = value; saveState(); } }
+
+const statusEmoji = { running:'✅', stopped:'🔴', maintenance:'🔧', idle:'⏸', other:'ℹ️' };
+const statusLabel = { running:'Running', stopped:'Stopped', maintenance:'Maintenance', idle:'Idle', other:'Other' };
+
+function renderMachines() {
+  const body = document.getElementById('machineBody');
+  body.innerHTML = '';
+  machines.forEach(m => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${esc(m.name)}" placeholder="e.g. CMM-01" onchange="updateMachine(${m.id},'name',this.value)" oninput="updateMachine(${m.id},'name',this.value)"/></td>
+      <td>
+        <select class="st-${m.status}" onchange="updateMachine(${m.id},'status',this.value);this.className='st-'+this.value">
+          <option value="running" ${m.status==='running'?'selected':''}>✅ Running</option>
+          <option value="stopped" ${m.status==='stopped'?'selected':''}>🔴 Stopped</option>
+          <option value="maintenance" ${m.status==='maintenance'?'selected':''}>🔧 Maintenance</option>
+          <option value="idle" ${m.status==='idle'?'selected':''}>⏸ Idle</option>
+          <option value="other" ${m.status==='other'?'selected':''}>ℹ️ Other</option>
+        </select>
+      </td>
+      <td><input type="text" value="${esc(m.notes)}" placeholder="Notes…" onchange="updateMachine(${m.id},'notes',this.value)" oninput="updateMachine(${m.id},'notes',this.value)"/></td>
+      <td><button class="remove-btn" onclick="removeMachine(${m.id})" title="Remove"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg></button></td>`;
+    body.appendChild(tr);
+  });
+  saveState();
+}
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function capitalize(s){ return s?s[0].toUpperCase()+s.slice(1):s; }
+
+// ── CANVAS REPORT ──
+function generateReport() {
+  const date = document.getElementById('shiftDate').value;
+  const shift = document.getElementById('shiftType').value;
+  const name = document.getElementById('preparedBy').value || '—';
+  const areas = selectedAreas.length ? selectedAreas.join(', ') : 'Not selected';
+  const incident = ntrState.incident ? 'Nothing to report.' : (document.getElementById('incidentText').value.trim() || '—');
+  const actions = ntrState.actions ? 'Nothing to report.' : (document.getElementById('actionsText').value.trim() || '—');
+  const dateStr = date ? new Intl.DateTimeFormat('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(date+'T12:00:00')) : '—';
+  const generatedAt = new Date().toLocaleString('en-GB', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
+
+  const SCALE = 2;
+  const W = 900;
+  const canvas = document.getElementById('reportCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // ── helpers ──
+  function measureH() {
+    // estimate height dynamically
+    let h = 120 + 110 + 20; // header + info + gap
+    h += 40 + machines.length * 44 + 20; // machine table
+    h += 40 + wrapLines(ctx, incident, W - 80, 15).length * 22 + 30;
+    h += 40 + wrapLines(ctx, actions, W - 80, 15).length * 22 + 30;
+    h += 60; // footer
+    return Math.max(h, 800);
+  }
+
+  function wrapLines(ctx, text, maxW, fontSize) {
+    ctx.font = `${fontSize}px -apple-system, 'Helvetica Neue', sans-serif`;
+    const words = text.split(' ');
+    const lines = [];
+    let line = '';
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    if (line) lines.push(line);
+    return lines.length ? lines : [''];
+  }
+
+  // First pass to measure
+  canvas.width = W * SCALE;
+  canvas.height = 100 * SCALE;
+  ctx.scale(SCALE, SCALE);
+  const H = measureH() + 40;
+  canvas.width = W * SCALE;
+  canvas.height = H * SCALE;
+  ctx.scale(SCALE, SCALE);
+
+  const navy = '#1b2e4b';
+  const navyMid = '#243d61';
+  const steel = '#334155';
+  const border = '#e2e8f0';
+  const surface2 = '#f8fafc';
+  const textPrimary = '#0f172a';
+  const textSecondary = '#475569';
+  const textMuted = '#94a3b8';
+  const green = '#16a34a';
+  const greenBg = '#dcfce7';
+  const red = '#dc2626';
+  const redBg = '#fee2e2';
+  const amber = '#d97706';
+  const amberBg = '#fef3c7';
+
+  function rrect(x, y, w, h, r, fill) {
+    ctx.fillStyle = fill;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    ctx.fill();
+  }
+  function rect(x, y, w, h, fill) { ctx.fillStyle = fill; ctx.fillRect(x, y, w, h); }
+  function line(x1, y1, x2, y2, color, lw=1) { ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); }
+  function text(str, x, y, size, color, weight='400', align='left') {
+    ctx.font = `${weight} ${size}px -apple-system, 'Helvetica Neue', sans-serif`;
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.fillText(str, x, y);
+    ctx.textAlign = 'left';
+  }
+  function pill(label, x, y, color, bg) {
+    ctx.font = `600 12px -apple-system, 'Helvetica Neue', sans-serif`;
+    const tw = ctx.measureText(label).width;
+    rrect(x, y-14, tw+16, 20, 10, bg);
+    text(label, x+8, y, 12, color, '600');
+  }
+
+  // Palette refinements for professional look
+  const ink = '#0b1220';          // deeper slate for header/footer
+  const inkSoft = '#1e293b';      // softer slate for logo box
+  const accent = '#3b82f6';       // accent rule
+  const bandBg = '#f8fafc';       // light section band
+  const bandText = '#0f172a';     // dark section label
+  const ruleStrong = '#cbd5e1';   // stronger rule under section bands
+
+  // Background
+  rect(0, 0, W, H, '#eef2f7');
+
+  // ── HEADER (light, document-style) ──
+  rect(0, 0, W, 100, '#ffffff');
+  // Accent rule under header
+  rect(0, 98, W, 2, accent);
+
+  // Logo box — light surface, accent outline, dark glyph
+  rrect(28, 24, 52, 52, 10, '#f1f5f9');
+  ctx.strokeStyle = accent; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(28.75, 24.75, 50.5, 50.5, 9); ctx.stroke();
+  // Clipboard glyph in dark ink
+  ctx.strokeStyle = ink; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.roundRect(38, 32, 32, 36, 4); ctx.stroke();
+  ctx.fillStyle = ink; ctx.fillRect(46, 28, 16, 8);
+  line(43, 42, 59, 42, 'rgba(15,23,42,0.65)', 1.5);
+  line(43, 48, 59, 48, 'rgba(15,23,42,0.65)', 1.5);
+  line(43, 54, 53, 54, 'rgba(15,23,42,0.65)', 1.5);
+
+  text('SHIFT HANDOVER REPORT', 96, 52, 20, ink, '800');
+  text('PRODUCTION SYSTEM · TEAM REPORT', 96, 74, 11, textMuted, '600');
+
+  // Generated timestamp top right
+  text(generatedAt, W - 28, 58, 11, textMuted, '400', 'right');
+
+  // ── INFO BAND ──
+  let y = 100;
+  rect(0, y, W, 104, '#fff');
+  line(0, y + 103, W, y + 103, border, 1);
+
+  const infoItems = [
+    ['DATE', dateStr],
+    ['SHIFT', shift],
+    ['WORKING AREA', areas],
+    ['PREPARED BY', name],
+  ];
+  const colW = W / infoItems.length;
+  infoItems.forEach((item, i) => {
+    const cx = i * colW + 28;
+    text(item[0], cx, y + 36, 10, textMuted, '700');
+    text(item[1], cx, y + 66, 16, textPrimary, '700');
+    if (i > 0) line(i * colW, y + 20, i * colW, y + 84, border, 1);
+  });
+  y += 104;
+
+  // Helper: professional light section banner with left accent + bottom rule
+  function drawBanner(title, yStart) {
+    const bh = 36;
+    rect(0, yStart, W, bh, bandBg);
+    rect(0, yStart, 4, bh, accent);
+    text(title, 28, yStart + 23, 11, bandText, '800');
+    line(0, yStart + bh, W, yStart + bh, ruleStrong, 1);
+    return yStart + bh;
+  }
+
+  // ── MACHINE STATUS ──
+  y += 10;
+  y = drawBanner('MACHINE STATUS', y);
+
+  // Table header
+  const cols = [
+    { label: 'MACHINE', x: 28, w: 260 },
+    { label: 'STATUS', x: 300, w: 180 },
+    { label: 'REPORT / NOTES', x: 488, w: W - 488 - 24 },
+  ];
+  rect(0, y, W, 30, '#f1f5f9');
+  cols.forEach(c => text(c.label, c.x, y + 20, 10, textMuted, '700'));
+  line(0, y + 29, W, y + 29, border, 1);
+  y += 30;
+
+  machines.forEach((m, i) => {
+    const rowH = 42;
+    rect(0, y, W, rowH, i % 2 === 0 ? '#fff' : '#fafbfd');
+
+    text(m.name || '—', cols[0].x, y + 26, 14, textPrimary, '600');
+
+    const sMap = {
+      running:['✅ Running', green, greenBg],
+      stopped:['🔴 Stopped', red, redBg],
+      maintenance:['🔧 Maintenance', amber, amberBg],
+      idle:['⏸ Idle', textSecondary, '#f1f5f9'],
+      other:['ℹ️ Other', '#1d4ed8', '#dbeafe'],
+    };
+    const [slabel, scolor, sbg] = sMap[m.status] || sMap.running;
+    pill(slabel, cols[1].x, y + 27, scolor, sbg);
+
+    const notesText = m.notes || '—';
+    ctx.font = '400 13px -apple-system, \'Helvetica Neue\', sans-serif';
+    ctx.fillStyle = textSecondary;
+    ctx.fillText(notesText, cols[2].x, y + 26, cols[2].w - 8);
+
+    line(0, y + rowH - 1, W, y + rowH - 1, border, 1);
+    y += rowH;
+  });
+
+  y += 14;
+
+  // ── INCIDENTS / ACTIONS ──
+  function drawSection(title, content, yStart) {
+    let cy = drawBanner(title, yStart);
+    const lines2 = wrapLines(ctx, content, W - 56, 15);
+    const blockH = lines2.length * 24 + 32;
+    rect(0, cy, W, blockH, '#fff');
+    lines2.forEach((ln, i) => { text(ln, 28, cy + 26 + i * 24, 15, textPrimary, '400'); });
+    line(0, cy + blockH - 1, W, cy + blockH - 1, border, 1);
+    return cy + blockH + 12;
+  }
+
+  y = drawSection('INCIDENTS / ISSUES', incident, y);
+  y = drawSection('ACTIONS REQUIRED', actions, y);
+
+  // ── FOOTER (light, document-style) ──
+  rect(0, y, W, 2, accent);
+  rect(0, y + 2, W, 54, '#ffffff');
+  line(0, y + 55, W, y + 55, border, 1);
+  text('Shift Handover Report', 28, y + 26, 12, textPrimary, '700');
+  text(generatedAt, 28, y + 44, 11, textMuted, '400');
+  text('CONFIDENTIAL — INTERNAL USE ONLY', W - 28, y + 35, 10, textSecondary, '700', 'right');
+
+  // Trim canvas height
+  const finalH = y + 56;
+  const imageData = ctx.getImageData(0, 0, W * SCALE, finalH * SCALE);
+  canvas.width = W * SCALE;
+  canvas.height = finalH * SCALE;
+  ctx.putImageData(imageData, 0, 0);
+
+  // Show modal
+  document.getElementById('modalSub').textContent = `${shift} Shift · ${areas} · ${dateStr}`;
+  document.getElementById('modalOverlay').classList.add('visible');
+  saveState();
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('visible'); }
+document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+async function copyImage() {
+  const canvas = document.getElementById('reportCanvas');
+  try {
+    canvas.toBlob(async blob => {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+        const btn = document.querySelector('.modal-btn-secondary:last-of-type');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg> Copied!';
+        setTimeout(() => btn.innerHTML = orig, 2000);
+      } catch { alert('Copy not supported — please long-press the image to save.'); }
+    });
+  } catch { alert('Unable to copy image on this device.'); }
+}
+
+function saveImage() {
+  const canvas = document.getElementById('reportCanvas');
+  const date = document.getElementById('shiftDate').value || 'report';
+  const link = document.createElement('a');
+  link.download = `handover-${date}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ── PERSISTENCE ──
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      date: getEl('date').value, shift: getEl('shift').value, by: getEl('by').value,
-      rows, incidents: getEl('incidents').value, actions: getEl('actions').value,
-      noIssues, noActions
+    localStorage.setItem('handover_v2', JSON.stringify({
+      date: document.getElementById('shiftDate').value,
+      shift: document.getElementById('shiftType').value,
+      name: document.getElementById('preparedBy').value,
+      areas: selectedAreas,
+      machines, machineCounter,
+      ntrState,
+      incident: document.getElementById('incidentText').value,
+      actions: document.getElementById('actionsText').value,
     }));
-  } catch(e){}
-}
-function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){return null;} }
-
-function renderRows() {
-  const container = getEl('rows');
-  container.innerHTML = '';
-  rows.forEach((row, i) => {
-    const div = document.createElement('div');
-    div.className = 'row-grid';
-    div.innerHTML =
-      '<input placeholder="e.g. IMM-01" value="' + escapeAttr(row.machine) + '" data-i="' + i + '" data-f="machine" />' +
-      '<select data-i="' + i + '" data-f="status">' + STATUSES.map(s => '<option' + (s === row.status ? ' selected' : '') + '>' + s + '</option>').join('') + '</select>' +
-      '<input placeholder="Report notes..." value="' + escapeAttr(row.report) + '" data-i="' + i + '" data-f="report" />' +
-      '<button class="btn btn-remove" data-i="' + i + '" data-act="remove">✕</button>';
-    container.appendChild(div);
-  });
-  container.querySelectorAll('input, select').forEach(el => {
-    const handler = e => {
-      const i = +e.target.dataset.i, f = e.target.dataset.f;
-      let val = e.target.value;
-      if (f === 'machine') {
-        const upper = val.toUpperCase();
-        if (upper !== val) e.target.value = upper;
-        val = upper;
-      }
-      rows[i][f] = val; saveState();
-    };
-    el.addEventListener('input', handler);
-    el.addEventListener('change', handler);
-  });
-  container.querySelectorAll('button[data-act="remove"]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const i = +e.currentTarget.dataset.i;
-      rows.splice(i, 1); renderRows(); saveState();
-    });
-  });
+  } catch(e) {}
 }
 
-function updateChk() {
-  const ni = getEl('noIssuesChk'), na = getEl('noActionsChk');
-  ni.className = 'chk' + (noIssues ? ' on' : ''); ni.textContent = noIssues ? '✓' : '';
-  na.className = 'chk' + (noActions ? ' on' : ''); na.textContent = noActions ? '✓' : '';
-  const inc = getEl('incidents'), act = getEl('actions');
-  if (noIssues) { inc.value = 'Nothing to report.'; inc.disabled = true; }
-  else { if (inc.value === 'Nothing to report.') inc.value = ''; inc.disabled = false; }
-  if (noActions) { act.value = 'Nothing to report.'; act.disabled = true; }
-  else { if (act.value === 'Nothing to report.') act.value = ''; act.disabled = false; }
-}
-getEl('noIssuesLabel').addEventListener('click', e => { e.preventDefault(); noIssues = !noIssues; updateChk(); saveState(); });
-getEl('noActionsLabel').addEventListener('click', e => { e.preventDefault(); noActions = !noActions; updateChk(); saveState(); });
-
-function getReportData() {
-  const filtered = rows.filter(r => (r.machine||'').trim());
-  const incText = noIssues ? 'Nothing to report.' : (getEl('incidents').value.trim() || 'Nothing to report.');
-  const actText = noActions ? 'Nothing to report.' : (getEl('actions').value.trim() || 'Nothing to report.');
-  return {
-    date: getEl('date').value, shift: getEl('shift').value,
-    by: getEl('by').value || '—', filtered, incText, actText
-  };
-}
-
-function buildMarkdown() {
-  const d = getReportData();
-  const lines = [];
-  lines.push('📋 **SHIFT HANDOVER REPORT**'); lines.push('');
-  lines.push('**Date:** ' + formatDate(d.date) + '  ');
-  lines.push('**Shift:** ' + d.shift + '  ');
-  lines.push('**Prepared by:** ' + d.by);
-  lines.push(''); lines.push('---'); lines.push('');
-  lines.push('**PRODUCTION STATUS**'); lines.push('');
-  if (d.filtered.length === 0) lines.push('Nothing to report.');
-  else d.filtered.forEach((r, i) => {
-    lines.push('**' + r.machine + '** — ' + r.status + '  ');
-    lines.push((r.report||'').trim() || 'No notes.');
-    if (i < d.filtered.length - 1) { lines.push(''); lines.push('---'); lines.push(''); }
-  });
-  lines.push(''); lines.push('---'); lines.push('');
-  lines.push('**INCIDENTS / ISSUES**'); lines.push(''); lines.push(d.incText);
-  lines.push(''); lines.push('---'); lines.push('');
-  lines.push('**ACTIONS REQUIRED**'); lines.push(''); lines.push(d.actText);
-  return lines.join('\n');
-}
-
-function renderPreview() {
-  const d = getReportData();
-  let html = '';
-  html += '<div class="report-title">📋 SHIFT HANDOVER REPORT</div>';
-  html += '<div class="report-meta"><strong>Date:</strong> ' + escapeHtml(formatDate(d.date)) + '</div>';
-  html += '<div class="report-meta"><strong>Shift:</strong> ' + escapeHtml(d.shift) + '</div>';
-  html += '<div class="report-meta"><strong>Prepared by:</strong> ' + escapeHtml(d.by) + '</div>';
-  html += '<hr />';
-  html += '<div class="report-section-head">Production Status</div>';
-  if (d.filtered.length === 0) html += '<div class="report-body-text empty">Nothing to report.</div>';
-  else d.filtered.forEach((r, i) => {
-    html += '<div>';
-    html += '<span class="report-machine-name">' + escapeHtml(r.machine) + '</span>';
-    html += '<span class="report-machine-status"> — ' + escapeHtml(r.status) + '</span>';
-    html += '<div class="report-machine-notes">' + escapeHtml((r.report||'').trim() || 'No notes.') + '</div>';
-    html += '</div>';
-    if (i < d.filtered.length - 1) html += '<hr class="dashed" />';
-  });
-  html += '<hr />';
-  html += '<div class="report-section-head">Incidents / Issues</div>';
-  html += '<div class="report-body-text' + (d.incText === 'Nothing to report.' ? ' empty' : '') + '">' + escapeHtml(d.incText) + '</div>';
-  html += '<hr />';
-  html += '<div class="report-section-head">Actions Required</div>';
-  html += '<div class="report-body-text' + (d.actText === 'Nothing to report.' ? ' empty' : '') + '">' + escapeHtml(d.actText) + '</div>';
-  getEl('preview').innerHTML = html;
-}
-
-// ========== IMAGE RENDERING ==========
-function renderImageBlob() {
-  return new Promise(async function(resolve) {
-    if (document.fonts && document.fonts.ready) {
-      try { await document.fonts.ready; } catch(e){}
-    }
-    const d = getReportData();
-    const dpr = (window.devicePixelRatio > 1) ? 2 : 1.5;
-    const width = 760;
-    const pad = 40;
-    const contentW = width - pad * 2;
-    const FS = '-apple-system, "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", Arial, sans-serif';
-    const F = {
-      title: '700 22px ' + FS, section: '700 12px ' + FS,
-      metaKey: '600 14.5px ' + FS, metaVal: '400 14.5px ' + FS,
-      machineName: '700 16px ' + FS, machineStatus: '400 16px ' + FS,
-      notes: '400 14px ' + FS, body: '400 14px ' + FS,
-      bodyItalic: 'italic 400 14px ' + FS
-    };
-
-    const meas = document.createElement('canvas').getContext('2d');
-    function wrap(text, font, maxW) {
-      meas.font = font;
-      const words = String(text).split(/\s+/);
-      const lines = []; let line = '';
-      for (const w of words) {
-        const test = line ? line + ' ' + w : w;
-        if (meas.measureText(test).width > maxW && line) { lines.push(line); line = w; }
-        else line = test;
-      }
-      if (line) lines.push(line);
-      return lines.length ? lines : [''];
-    }
-
-    let h = pad;
-    h += 28 + 18;                 // title
-    h += 3 * 24;                  // meta
-    h += 14 + 1 + 22;             // gap + divider + gap
-    h += 18 + 14;                 // section head
-    if (d.filtered.length === 0) h += 22;
-    else d.filtered.forEach((r, i) => {
-      h += 24;
-      const notes = (r.report||'').trim() || 'No notes.';
-      h += wrap(notes, F.notes, contentW).length * 20;
-      if (i < d.filtered.length - 1) h += 14 + 1 + 14;
-    });
-    h += 22 + 1 + 22;
-    h += 18 + 14;
-    h += wrap(d.incText, F.body, contentW).length * 20;
-    h += 22 + 1 + 22;
-    h += 18 + 14;
-    h += wrap(d.actText, F.body, contentW).length * 20;
-    h += pad;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = width * dpr; canvas.height = h * dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-    ctx.textBaseline = 'alphabetic';
-
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, h);
-    ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
-    ctx.strokeRect(0.5, 0.5, width - 1, h - 1);
-
-    let y = pad;
-    ctx.fillStyle = '#111'; ctx.font = F.title;
-    ctx.fillText('📋 SHIFT HANDOVER REPORT', pad, y + 20);
-    y += 28 + 18;
-
-    function drawMeta(key, val) {
-      ctx.fillStyle = '#111'; ctx.font = F.metaKey;
-      const kw = ctx.measureText(key + ' ').width;
-      ctx.fillText(key, pad, y + 16);
-      ctx.fillStyle = '#374151'; ctx.font = F.metaVal;
-      ctx.fillText(val, pad + kw, y + 16);
-      y += 24;
-    }
-    drawMeta('Date:', formatDate(d.date));
-    drawMeta('Shift:', d.shift);
-    drawMeta('Prepared by:', d.by);
-
-    y += 14;
-    ctx.strokeStyle = '#d1d5db'; ctx.setLineDash([]);
-    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
-    y += 1 + 22;
-
-    ctx.fillStyle = '#111'; ctx.font = F.section;
-    ctx.fillText('PRODUCTION STATUS', pad, y + 13);
-    y += 18 + 14;
-
-    if (d.filtered.length === 0) {
-      ctx.fillStyle = '#9ca3af'; ctx.font = F.bodyItalic;
-      ctx.fillText('Nothing to report.', pad, y + 14);
-      y += 22;
-    } else {
-      d.filtered.forEach((r, i) => {
-        ctx.fillStyle = '#111'; ctx.font = F.machineName;
-        const nw = ctx.measureText(r.machine).width;
-        ctx.fillText(r.machine, pad, y + 18);
-        ctx.fillStyle = '#374151'; ctx.font = F.machineStatus;
-        ctx.fillText(' — ' + r.status, pad + nw, y + 18);
-        y += 24;
-
-        const notes = (r.report||'').trim() || 'No notes.';
-        const noteLines = wrap(notes, F.notes, contentW);
-        ctx.fillStyle = '#4b5563'; ctx.font = F.notes;
-        noteLines.forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
-
-        if (i < d.filtered.length - 1) {
-          y += 14;
-          ctx.strokeStyle = '#d1d5db'; ctx.setLineDash([3, 4]);
-          ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
-          ctx.setLineDash([]);
-          y += 1 + 14;
-        }
-      });
-    }
-
-    y += 22;
-    ctx.strokeStyle = '#d1d5db';
-    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
-    y += 1 + 22;
-
-    ctx.fillStyle = '#111'; ctx.font = F.section;
-    ctx.fillText('INCIDENTS / ISSUES', pad, y + 13);
-    y += 18 + 14;
-    const incNothing = d.incText === 'Nothing to report.';
-    ctx.fillStyle = incNothing ? '#9ca3af' : '#374151';
-    ctx.font = incNothing ? F.bodyItalic : F.body;
-    wrap(d.incText, F.body, contentW).forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
-
-    y += 22;
-    ctx.strokeStyle = '#d1d5db';
-    ctx.beginPath(); ctx.moveTo(pad, y + 0.5); ctx.lineTo(width - pad, y + 0.5); ctx.stroke();
-    y += 1 + 22;
-
-    ctx.fillStyle = '#111'; ctx.font = F.section;
-    ctx.fillText('ACTIONS REQUIRED', pad, y + 13);
-    y += 18 + 14;
-    const actNothing = d.actText === 'Nothing to report.';
-    ctx.fillStyle = actNothing ? '#9ca3af' : '#374151';
-    ctx.font = actNothing ? F.bodyItalic : F.body;
-    wrap(d.actText, F.body, contentW).forEach(function(line) { ctx.fillText(line, pad, y + 14); y += 20; });
-
-    canvas.toBlob(function(blob) { resolve(blob); }, 'image/png');
-  });
-}
-
-async function shareAsImage() {
-  const btn = getEl('imgBtn');
-  const origText = btn.textContent;
-  btn.textContent = 'Generating...';
-  btn.disabled = true;
-
+function loadState() {
   try {
-    const blob = await renderImageBlob();
-    const d = getReportData();
-    const filename = 'handover-' + d.date + '-' + d.shift.toLowerCase() + '.png';
-
-    // Try Web Share API (native iOS share sheet)
-    try {
-      const file = new File([blob], filename, { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Shift Handover Report' });
-        return;
-      }
-    } catch(e) {
-      if (e && e.name === 'AbortError') return;
+    const raw = localStorage.getItem('handover_v2');
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.date) document.getElementById('shiftDate').value = s.date;
+    if (s.shift) document.getElementById('shiftType').value = s.shift;
+    if (s.name) document.getElementById('preparedBy').value = s.name;
+    if (s.areas) {
+      selectedAreas = s.areas;
+      document.querySelectorAll('.area-btn').forEach(b => {
+        if (selectedAreas.includes(b.dataset.area)) b.classList.add('selected');
+      });
+      updateHeaderSub();
     }
-
-    // Fallback: show image modal
-    const url = URL.createObjectURL(blob);
-    getEl('modalImg').src = url;
-    getEl('modalDownload').href = url;
-    getEl('modalDownload').download = filename;
-    getEl('imgModal').style.display = 'flex';
-  } catch(e) {
-    alert('Could not create image: ' + (e && e.message ? e.message : e));
-  } finally {
-    btn.textContent = origText;
-    btn.disabled = false;
-  }
-}
-
-getEl('modalClose').addEventListener('click', () => {
-  getEl('imgModal').style.display = 'none';
-  const src = getEl('modalImg').src;
-  if (src.startsWith('blob:')) URL.revokeObjectURL(src);
-  getEl('modalImg').src = '';
-});
-getEl('imgModal').addEventListener('click', e => {
-  if (e.target === getEl('imgModal')) getEl('modalClose').click();
-});
-getEl('imgBtn').addEventListener('click', shareAsImage);
-
-getEl('generate').addEventListener('click', () => {
-  renderPreview();
-  getEl('outputCard').style.display = 'block';
-  const btn = getEl('copyBtn');
-  btn.textContent = 'Copy'; btn.classList.remove('copied');
-  setTimeout(() => { getEl('outputCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-});
-
-getEl('copyBtn').addEventListener('click', () => {
-  const text = buildMarkdown();
-  const fallback = () => {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch(e){}
-    document.body.removeChild(ta);
-  };
-  if (navigator.clipboard) navigator.clipboard.writeText(text).catch(fallback);
-  else fallback();
-  const btn = getEl('copyBtn');
-  btn.textContent = '✓ Copied'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
-});
-
-getEl('addRow').addEventListener('click', () => {
-  rows.push({ machine: '', status: '✅ Running', report: '' });
-  renderRows(); saveState();
-});
-
-['date','shift','by','incidents','actions'].forEach(id => {
-  getEl(id).addEventListener('input', saveState);
-  getEl(id).addEventListener('change', saveState);
-});
-
-(function init() {
-  const saved = loadState();
-  if (saved) {
-    getEl('date').value = saved.date || new Date().toISOString().slice(0,10);
-    getEl('shift').value = saved.shift || 'Morning';
-    getEl('by').value = saved.by || '';
-    getEl('incidents').value = saved.incidents || '';
-    getEl('actions').value = saved.actions || '';
-    rows = (saved.rows && saved.rows.length) ? saved.rows : [
-      { machine: '', status: '✅ Running', report: '' },
-      { machine: '', status: '✅ Running', report: '' },
-      { machine: '', status: '✅ Running', report: '' }
-    ];
-    noIssues = !!saved.noIssues; noActions = !!saved.noActions;
-  } else {
-    getEl('date').value = new Date().toISOString().slice(0,10);
-    rows = [
-      { machine: '', status: '✅ Running', report: '' },
-      { machine: '', status: '✅ Running', report: '' },
-      { machine: '', status: '✅ Running', report: '' }
-    ];
-  }
-  renderRows(); updateChk();
-})();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
+    if (s.machines) { machines = s.machines; machineCounter = s.machineCounter || 10; }
+    if (s.ntrState) {
+      ntrState = s.ntrState;
+      if (ntrState.incident) { document.getElementById('ntrIncident').classList.add('checked'); document.getElementById('incidentBody').classList.add('section-dimmed'); }
+      if (ntrState.actions) { document.getElementById('ntrActions').classList.add('checked'); document.getElementById('actionsBody').classList.add('section-dimmed'); }
+    }
+    if (s.incident) document.getElementById('incidentText').value = s.incident;
+    if (s.actions) document.getElementById('actionsText').value = s.actions;
+  } catch(e) {}
 }
 </script>
-
 </body>
 </html>
